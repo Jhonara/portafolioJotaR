@@ -18,8 +18,12 @@ export interface AppWindow {
   zIndex: number;
 }
 
+export type DesktopTheme = "neon" | "matrix" | "night";
+
 interface DesktopStore {
   windows: AppWindow[];
+  theme: DesktopTheme;
+  coffeeMode: boolean;
 
   openWindow: (window: { id: string; title: string }) => void;
 
@@ -34,6 +38,10 @@ interface DesktopStore {
   maximizeWindow: (id: string) => void;
 
   moveWindow: (id: string, x: number, y: number) => void;
+
+  setTheme: (theme: DesktopTheme) => void;
+
+  activateCoffee: () => void;
 }
 
 const getWindowDimensions = () => {
@@ -60,6 +68,8 @@ const getInitialPosition = (windowIndex: number, width: number, height: number) 
 export const useDesktopStore = create<DesktopStore>((set) => ({
 
   windows: [],
+  theme: "neon",
+  coffeeMode: false,
 
   openWindow: (window) =>
     set((state) => {
@@ -217,6 +227,13 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
           : w
       )
 
-    }))
+    })),
+
+  setTheme: (theme) => set({ theme }),
+
+  activateCoffee: () => {
+    set({ coffeeMode: true });
+    window.setTimeout(() => set({ coffeeMode: false }), 4200);
+  }
 
 }));

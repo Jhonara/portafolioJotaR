@@ -39,13 +39,13 @@ const DesktopIcon = ({ icon, title }: Props) => {
       whileTap={{
         scale: .95,
       }}
-      className="flex flex-col items-center gap-2 text-white"
+      className="group flex min-w-0 flex-1 flex-col items-center gap-1.5 text-white"
     >
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition-colors group-hover:border-cyan-300/50 group-hover:bg-cyan-400/15 sm:h-14 sm:w-14">
         {icon}
       </div>
 
-      <span className="text-sm">
+      <span className="max-w-full truncate text-xs sm:text-sm">
         {title}
       </span>
     </motion.button>

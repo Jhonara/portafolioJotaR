@@ -7,13 +7,15 @@ import { apps } from "../../apps";
 import { useDesktopStore } from "../../store/desktop.store";
 import type { AppWindow } from "../../store/desktop.store";
 
-const minimizeTargets: Record<string, { x: number; y: number }> = {
-  about: { x: 40, y: 160 },
-  projects: { x: 40, y: 256 },
-  skills: { x: 40, y: 352 },
-  experience: { x: 40, y: 448 },
-  contact: { x: 40, y: 544 },
-  terminal: { x: 40, y: 640 },
+const dockOrder = ["about", "projects", "skills", "experience", "contact", "terminal"];
+
+const getMinimizeTarget = (id: string) => {
+  const rawIndex = dockOrder.indexOf(id);
+  const index = rawIndex === -1 ? dockOrder.length - 1 : rawIndex;
+  return {
+    x: Math.round(window.innerWidth / 2 - 264 + index * 88),
+    y: window.innerHeight - 112,
+  };
 };
 
 interface ManagedWindowProps {
@@ -23,7 +25,7 @@ interface ManagedWindowProps {
 const ManagedWindow = ({ appWindow }: ManagedWindowProps) => {
   const dragStart = useRef<{ pointerX: number; pointerY: number; x: number; y: number } | null>(null);
   const { focusWindow, finishMinimizeWindow, moveWindow } = useDesktopStore();
-  const target = minimizeTargets[appWindow.id] ?? minimizeTargets.terminal;
+  const target = getMinimizeTarget(appWindow.id);
 
   const onTitlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (appWindow.maximized || appWindow.minimizing || (event.target as HTMLElement).closest("button")) return;

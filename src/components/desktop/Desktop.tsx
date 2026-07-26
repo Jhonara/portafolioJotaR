@@ -14,21 +14,24 @@ import DesktopBackground from "./DesktopBackground";
 import DesktopHeader from "./DesktopHeader";
 import DesktopClock from "./DesktopClock";
 import DesktopIcon from "./DesktopIcon";
+import { useDesktopStore } from "../../store/desktop.store";
+import CoffeeOverlay from "./CoffeeOverlay";
 
 const Desktop = () => {
   const desktopRef = useRef<HTMLDivElement>(null);
+  const theme = useDesktopStore((state) => state.theme);
 
   return (
     <section
       ref={desktopRef}
-      className="relative h-screen w-screen overflow-hidden"
+      className={`relative h-screen w-screen overflow-hidden ${theme === "matrix" ? "matrix-mode" : theme === "night" ? "night-mode" : "neon-mode"}`}
     >
       <DesktopBackground />
 
       <DesktopHeader />
 
       <motion.div
-        className="absolute left-10 top-40 flex flex-col gap-8"
+        className="absolute bottom-6 left-1/2 z-20 flex w-[min(92vw,600px)] -translate-x-1/2 items-start justify-between gap-2 rounded-3xl border border-white/10 bg-slate-950/55 px-3 py-3 shadow-[0_14px_50px_rgba(0,0,0,.38)] backdrop-blur-2xl sm:px-5"
         variants={{
           hidden: {},
           show: {
@@ -51,6 +54,7 @@ const Desktop = () => {
       <WindowManager />
 
       <DesktopClock />
+      <CoffeeOverlay />
     </section>
   );
 };

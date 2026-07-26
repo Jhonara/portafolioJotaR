@@ -1,1 +1,28 @@
 @import "tailwindcss";
+
+html, body, #root {
+  min-height: 100%;
+  background: #030611;
+  color-scheme: dark;
+}
+
+@keyframes matrix-rain {
+  from { transform: translateY(-10%); }
+  to { transform: translateY(110%); }
+}
+
+.matrix-mode { background: #010807; }
+.matrix-mode::before {
+  content: "01001010 01001111 01010100 01000001 01010010 00101110 01001111 01010011 01001110 01000101 00100000 01010000 01001111 01010010 01010100 01000110 01001111 01001100 01001001 01001111";
+  position: absolute;
+  inset: -30% 0 auto;
+  z-index: 1;
+  pointer-events: none;
+  color: rgba(74, 222, 128, .16);
+  font: 18px/2.3 monospace;
+  letter-spacing: .6em;
+  overflow: hidden;
+  animation: matrix-rain 11s linear infinite;
+}
+.matrix-mode .text-cyan-400, .matrix-mode .text-cyan-300 { color: rgb(74 222 128); }
+.night-mode { filter: saturate(.72) hue-rotate(22deg) brightness(.86); }
