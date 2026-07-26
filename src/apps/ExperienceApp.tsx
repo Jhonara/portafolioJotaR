@@ -1,21 +1,20 @@
-import { motion } from "framer-motion";
-import { BriefcaseBusiness, GraduationCap } from "lucide-react";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { BriefcaseBusiness, ChevronRight, GraduationCap, MapPinned, Sparkles } from "lucide-react";
 
 const timeline = [
-  { year: "2024 — hoy", title: "Desarrollador de software", place: "Playtechnologies", icon: BriefcaseBusiness, detail: "Backend con Java y Spring Boot, frontend con React, PostgreSQL, despliegues, Scrum y documentación técnica.", current: true },
-  { year: "2020 — 2024", title: "Soporte hardware", place: "Playtechnologies", icon: BriefcaseBusiness, detail: "Soporte a equipos POS, kioskos y redes; mantenimiento, análisis de logs y gestión de proveedores." },
-  { year: "2019 — 2020", title: "Auxiliar de sistemas", place: "Zagacol", icon: BriefcaseBusiness, detail: "Mantenimiento de equipos, soporte de cámaras y telefonía IP, configuración de software y redes." },
-  { year: "2024", title: "Ingeniería de Sistemas", place: "CUN", icon: GraduationCap, detail: "Formación profesional en sistemas y desarrollo de software." },
-  { year: "2022", title: "Tecnólogo ADSI", place: "SENA", icon: GraduationCap, detail: "Análisis y Desarrollo de Sistemas de Información." },
+  { year: "2024 — hoy", title: "Desarrollador de software", place: "Playtechnologies", icon: BriefcaseBusiness, color: "cyan", detail: "Participación y liderazgo en backend con Java y Spring Boot, interfaces React, PostgreSQL, despliegues, Scrum y documentación técnica.", skills: ["Java", "Spring Boot", "React", "PostgreSQL"] },
+  { year: "2020 — 2024", title: "Soporte hardware", place: "Playtechnologies", icon: BriefcaseBusiness, color: "violet", detail: "Soporte a equipos POS, kioskos y redes; mantenimiento, análisis de logs, soporte en campo y gestión de proveedores.", skills: ["POS", "Sunmi", "Redes", "Linux"] },
+  { year: "2019 — 2020", title: "Auxiliar de sistemas", place: "Zagacol", icon: BriefcaseBusiness, color: "amber", detail: "Mantenimiento de equipos, soporte de cámaras y telefonía IP, configuración de software y redes.", skills: ["Hardware", "CCTV", "Telefonía IP"] },
+  { year: "2024", title: "Ingeniería de Sistemas", place: "CUN", icon: GraduationCap, color: "emerald", detail: "Formación profesional en sistemas, análisis y construcción de soluciones de software.", skills: ["Sistemas", "Software"] },
+  { year: "2022", title: "Tecnólogo ADSI", place: "SENA", icon: GraduationCap, color: "emerald", detail: "Análisis y Desarrollo de Sistemas de Información.", skills: ["Análisis", "Desarrollo"] },
 ];
 
-const ExperienceApp = () => (
-  <div className="text-white"><p className="font-mono text-sm text-cyan-300">// career_timeline.log</p><h2 className="mt-1 text-3xl font-bold">Trayectoria y formación</h2><div className="relative mt-7 space-y-5 border-l border-cyan-400/25 pl-7">
-    {timeline.map((item, index) => { const Icon = item.icon; return <motion.article key={`${item.title}-${item.year}`} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.08 }} className="relative rounded-xl border border-white/10 bg-white/5 p-4 hover:border-cyan-400/35">
-      <span className={`absolute -left-[37px] top-5 flex h-5 w-5 items-center justify-center rounded-full border-4 border-[#0B1220] ${item.current ? "bg-emerald-400" : "bg-violet-400"}`} />
-      <div className="flex gap-3"><div className="rounded-lg bg-cyan-400/10 p-2 text-cyan-300"><Icon size={19} /></div><div className="min-w-0"><div className="flex flex-wrap items-center gap-x-3"><h3 className="font-bold">{item.title}</h3><span className="font-mono text-xs text-cyan-300">{item.year}</span></div><p className="text-sm text-violet-300">{item.place}</p><p className="mt-2 text-sm leading-6 text-white/60">{item.detail}</p></div></div>
-    </motion.article>; })}
-  </div></div>
-);
+const ExperienceApp = () => {
+  const [selected, setSelected] = useState(0);
+  const current = timeline[selected];
+  const CurrentIcon = current.icon;
+  return <div className="text-white"><div className="mb-6"><p className="font-mono text-sm text-cyan-300">// career_map.log</p><h2 className="mt-1 text-3xl font-bold">Mapa de trayectoria</h2><p className="mt-2 text-white/60">Selecciona un nodo para explorar cada etapa del recorrido.</p></div><div className="grid gap-6 lg:grid-cols-[1fr_280px]"><div className="relative space-y-3 border-l border-cyan-400/25 pl-7">{timeline.map((item, index) => { const Icon = item.icon; return <motion.button key={`${item.title}-${item.year}`} onClick={() => setSelected(index)} whileHover={{ x: 5 }} className={`relative w-full rounded-xl border p-4 text-left transition ${selected === index ? "border-cyan-300/55 bg-cyan-400/10" : "border-white/10 bg-white/5 hover:border-white/25"}`}><span className={`absolute -left-[39px] top-5 flex h-5 w-5 items-center justify-center rounded-full border-4 border-[#0B1220] ${selected === index ? "bg-cyan-300" : "bg-violet-400"}`} /><div className="flex items-center gap-3"><div className="rounded-lg bg-white/10 p-2 text-cyan-300"><Icon size={18} /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-x-3"><h3 className="font-bold">{item.title}</h3><span className="font-mono text-xs text-cyan-300">{item.year}</span></div><p className="text-sm text-violet-300">{item.place}</p></div><ChevronRight size={17} className={selected === index ? "text-cyan-300" : "text-white/20"} /></div></motion.button>; })}</div><AnimatePresence mode="wait"><motion.aside key={current.title + current.year} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} className="h-fit rounded-2xl border border-cyan-300/25 bg-gradient-to-br from-cyan-400/10 via-slate-950 to-violet-500/10 p-5"><div className="flex items-center justify-between"><CurrentIcon className="text-cyan-300" size={26} /><span className="font-mono text-xs text-emerald-300">NODE_{String(selected + 1).padStart(2, "0")}</span></div><h3 className="mt-6 text-xl font-bold">{current.title}</h3><p className="mt-1 text-violet-300">{current.place} · {current.year}</p><p className="mt-4 text-sm leading-6 text-white/65">{current.detail}</p><div className="mt-5 flex flex-wrap gap-2">{current.skills.map((skill) => <span key={skill} className="rounded-full border border-cyan-300/20 px-2.5 py-1 text-xs text-cyan-100">{skill}</span>)}</div><div className="mt-6 flex items-center gap-2 text-xs text-white/45"><MapPinned size={14} className="text-cyan-300" /> Growth trajectory active</div></motion.aside></AnimatePresence></div><div className="mt-6 flex items-center gap-2 rounded-xl border border-violet-400/20 bg-violet-400/5 p-4 text-sm text-violet-100"><Sparkles size={17} /> Cada etapa aportó una herramienta distinta al sistema.</div></div>;
+};
 
 export default ExperienceApp;

@@ -1,20 +1,17 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { FaAngular, FaDocker, FaGitAlt, FaJava, FaJsSquare, FaLinux, FaNodeJs, FaReact } from "react-icons/fa";
+import { SiJira, SiMongodb, SiPostgresql, SiSpringboot, SiTailwindcss, SiTypescript, SiVite } from "react-icons/si";
 
-const clusters = [
-  { name: "Backend", color: "cyan", skills: ["Java", "Spring Boot", "Node.js", "PHP", "REST API", "Maven"] },
-  { name: "Frontend", color: "violet", skills: ["React", "Angular", "JavaScript", "TypeScript", "HTML", "CSS", "Tailwind", "Vite"] },
-  { name: "Datos", color: "emerald", skills: ["PostgreSQL", "MySQL", "SQL", "MongoDB"] },
-  { name: "Tooling", color: "amber", skills: ["Git", "GitHub", "Docker", "Postman", "Jira", "Linux", "Netlify"] },
+const skills = [
+  { name: "Java", group: "Backend", level: 92, icon: FaJava, color: "#f59e0b" }, { name: "Spring Boot", group: "Backend", level: 87, icon: SiSpringboot, color: "#86efac" }, { name: "Node.js", group: "Backend", level: 78, icon: FaNodeJs, color: "#4ade80" },
+  { name: "React", group: "Frontend", level: 88, icon: FaReact, color: "#67e8f9" }, { name: "Angular", group: "Frontend", level: 72, icon: FaAngular, color: "#fb7185" }, { name: "JavaScript", group: "Frontend", level: 86, icon: FaJsSquare, color: "#fde047" }, { name: "TypeScript", group: "Frontend", level: 74, icon: SiTypescript, color: "#60a5fa" }, { name: "Tailwind", group: "Frontend", level: 82, icon: SiTailwindcss, color: "#22d3ee" }, { name: "Vite", group: "Frontend", level: 78, icon: SiVite, color: "#c084fc" },
+  { name: "PostgreSQL", group: "Data", level: 84, icon: SiPostgresql, color: "#93c5fd" }, { name: "MongoDB", group: "Data", level: 65, icon: SiMongodb, color: "#86efac" }, { name: "Git", group: "Tooling", level: 88, icon: FaGitAlt, color: "#fb923c" }, { name: "Docker", group: "Tooling", level: 68, icon: FaDocker, color: "#60a5fa" }, { name: "Linux", group: "Tooling", level: 73, icon: FaLinux, color: "#facc15" }, { name: "Jira", group: "Tooling", level: 70, icon: SiJira, color: "#818cf8" },
 ];
 
-const colorClasses: Record<string, string> = { cyan: "border-cyan-400/35 text-cyan-200 bg-cyan-400/10", violet: "border-violet-400/35 text-violet-200 bg-violet-400/10", emerald: "border-emerald-400/35 text-emerald-200 bg-emerald-400/10", amber: "border-amber-400/35 text-amber-200 bg-amber-400/10" };
-
-const SkillsApp = () => (
-  <div className="text-white"><p className="font-mono text-sm text-cyan-300">// skill_radar.exe</p><h2 className="mt-1 text-3xl font-bold">Constelación técnica</h2><p className="mt-2 max-w-2xl text-white/60">Cada nodo representa una tecnología que he aplicado en proyectos, soporte o despliegue.</p>
-    <div className="mt-7 grid gap-4 md:grid-cols-2">{clusters.map((cluster, index) => <motion.section key={cluster.name} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * 0.08 }} className={`relative overflow-hidden rounded-2xl border p-5 ${colorClasses[cluster.color]}`}>
-      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-current opacity-10 blur-2xl" /><h3 className="relative text-lg font-bold">{cluster.name}</h3><div className="relative mt-4 flex flex-wrap gap-2">{cluster.skills.map((skill, skillIndex) => <motion.span key={skill} whileHover={{ scale: 1.08 }} transition={{ type: "spring", stiffness: 400 }} className="cursor-default rounded-full border border-current/30 bg-slate-950/50 px-3 py-1.5 text-sm" style={{ transitionDelay: `${skillIndex * 30}ms` }}>{skill}</motion.span>)}</div>
-    </motion.section>)}</div>
-  </div>
-);
+const SkillsApp = () => {
+  const [active, setActive] = useState(skills[0]);
+  return <div className="text-white"><div className="mb-6"><p className="font-mono text-sm text-cyan-300">// skill_radar.exe</p><h2 className="mt-1 text-3xl font-bold">Constelación técnica</h2><p className="mt-2 max-w-2xl text-white/60">Pasa por cada nodo para ver el nivel de dominio y el lugar que ocupa en mi stack.</p></div><div className="grid gap-6 lg:grid-cols-[270px_1fr]"><div className="relative flex min-h-72 items-center justify-center overflow-hidden rounded-2xl border border-cyan-400/25 bg-slate-950/60"><div className="absolute h-52 w-52 rounded-full border border-cyan-300/15" /><div className="absolute h-36 w-36 rounded-full border border-violet-300/20" /><div className="absolute h-20 w-20 rounded-full border border-dashed border-cyan-300/30" /><motion.div animate={{ rotate: 360 }} transition={{ duration: 14, repeat: Infinity, ease: "linear" }} className="absolute h-64 w-64 rounded-full border border-dashed border-violet-300/20" /><div className="relative text-center"><active.icon size={38} style={{ color: active.color }} className="mx-auto" /><p className="mt-3 font-bold">{active.name}</p><p className="font-mono text-xs text-white/45">{active.group} · {active.level}%</p><div className="mx-auto mt-3 h-1 w-28 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: `${active.level}%` }} className="h-full rounded-full" style={{ backgroundColor: active.color }} /></div></div></div><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{skills.map((skill, index) => { const Icon = skill.icon; const selected = skill.name === active.name; return <motion.button key={skill.name} onMouseEnter={() => setActive(skill)} onFocus={() => setActive(skill)} whileHover={{ scale: 1.03, y: -3 }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * .035 }} className={`flex items-center gap-3 rounded-xl border p-3 text-left transition ${selected ? "border-cyan-300/60 bg-cyan-400/10" : "border-white/10 bg-white/5 hover:border-white/25"}`}><Icon size={25} style={{ color: skill.color }} /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{skill.name}</span><span className="mt-1 block h-1 overflow-hidden rounded-full bg-black/30"><span className="block h-full rounded-full" style={{ width: `${skill.level}%`, backgroundColor: skill.color }} /></span></span><span className="font-mono text-xs text-white/45">{skill.level}%</span></motion.button>; })}</div></div></div>;
+};
 
 export default SkillsApp;
