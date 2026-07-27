@@ -4,12 +4,6 @@ import { ExternalLink, FolderGit2, Gamepad2, Globe2, MessageSquareText, MonitorC
 import { useLanguage } from "../i18n/LanguageContext";
 
 type Project = { name: string; description: string; tags: string[]; icon: typeof Gamepad2; demo?: string; repo: string; accent: string; preview: string };
-const projects: Project[] = [
-  { name: "Pokedex Pokémon", description: "Aplicación React que consume la PokéAPI para explorar y consultar Pokémon.", tags: ["React", "API", "JavaScript"], icon: Gamepad2, demo: "https://pokemon-api-jru.netlify.app", repo: "https://github.com/Jhonara/pokedex-react", accent: "from-red-400/35 via-yellow-300/10", preview: "Pokedex // exploring creatures" },
-  { name: "Coopcompartir v2", description: "Actualización de sitio web institucional para una cooperativa.", tags: ["React", "TypeScript", "Mailer"], icon: MonitorCog, demo: "https://compartirv2-coop-jru.netlify.app", repo: "https://github.com/Jhonara/Pagina-CoopV2", accent: "from-cyan-400/35 via-blue-500/10", preview: "COOPCOMPARTIR // community platform" },
-  { name: "Bot WhatsApp", description: "Bot conversacional con respuestas automáticas e interacción por WhatsApp.", tags: ["Node.js", "Bot", "JavaScript"], icon: MessageSquareText, repo: "https://github.com/Jhonara/bot-whatsapp", accent: "from-emerald-400/35 via-green-500/10", preview: "BOT SERVICE // listening for messages" },
-  { name: "JotaR.OS", description: "Este portafolio convertido en un sistema operativo interactivo con ventanas, terminal y easter eggs.", tags: ["React", "Framer Motion", "GSAP"], icon: Globe2, repo: "https://github.com/Jhonara", accent: "from-violet-400/35 via-cyan-500/10", preview: "JOTAR.OS // command deck online" },
-];
 
 const ProjectsApp = () => {
   const { t } = useLanguage();
