@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 
 import Typewriter from "../common/Typewriter";
 import Desktop from "../desktop/Desktop";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const bootLines = [
   "BIOS handshake established",
@@ -22,7 +23,7 @@ const BootScreen = () => {
   const [currentLine, setCurrentLine] = useState(0);
   const [phase, setPhase] = useState<Phase>("boot");
   const [bootComplete, setBootComplete] = useState(false);
-  const [language, setLanguage] = useState<"es" | "en">(() => (localStorage.getItem("jotar-language") as "es" | "en") || "es");
+  const { language, setLanguage } = useLanguage();
   const bootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const BootScreen = () => {
     }, bootRef);
     return () => context.revert();
   }, []);
-  const selectLanguage = (next: "es" | "en") => { setLanguage(next); localStorage.setItem("jotar-language", next); };
+  const selectLanguage = (next: "es" | "en") => setLanguage(next);
 
   useEffect(() => {
     if (phase !== "transition") return;

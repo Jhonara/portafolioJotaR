@@ -5,15 +5,16 @@ import { useDesktopStore } from "../../store/desktop.store";
 interface Props {
   icon: ReactNode;
   title: string;
+  id: string;
 }
 
-const DesktopIcon = ({ icon, title }: Props) => {
+const DesktopIcon = ({ icon, title, id }: Props) => {
   const { openWindow } = useDesktopStore();
   return (
     <motion.button
     onDoubleClick={() =>
         openWindow({
-            id: title.toLowerCase(),
+            id,
             title,
         })
     }
