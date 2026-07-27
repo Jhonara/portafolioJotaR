@@ -5,6 +5,7 @@ import SkillsApp from "./SkillsApp";
 import ExperienceApp from "./ExperienceApp";
 import ContactApp from "./ContactApp";
 import PokemonApp from "./PokemonApp";
+import IncreaseApp from "./IncreaseApp";
 
 export const apps = {
   about: <AboutApp />,
@@ -14,4 +15,5 @@ export const apps = {
   experience: <ExperienceApp />,
   contact: <ContactApp />,
   pokemon: <PokemonApp />,
+  increase: <IncreaseApp />,
 };
