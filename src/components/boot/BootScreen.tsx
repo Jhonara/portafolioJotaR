@@ -22,6 +22,7 @@ const BootScreen = () => {
   const [currentLine, setCurrentLine] = useState(0);
   const [phase, setPhase] = useState<Phase>("boot");
   const [bootComplete, setBootComplete] = useState(false);
+  const [language, setLanguage] = useState<"es" | "en">(() => (localStorage.getItem("jotar-language") as "es" | "en") || "es");
   const bootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const BootScreen = () => {
     }, bootRef);
     return () => context.revert();
   }, []);
+  const selectLanguage = (next: "es" | "en") => { setLanguage(next); localStorage.setItem("jotar-language", next); };
 
   useEffect(() => {
     if (phase !== "transition") return;
@@ -50,7 +52,7 @@ const BootScreen = () => {
 
       <AnimatePresence>{phase !== "desktop" && <motion.div animate={phase === "transition" ? { scale: 1.08, opacity: 0, filter: "blur(14px)" } : {}} transition={{ duration: 0.7 }} className="absolute inset-0 flex items-center justify-center p-4">
         <div className="boot-frame relative w-[820px] max-w-full overflow-hidden rounded-2xl border border-cyan-300/25 bg-[#040a14]/90 font-mono shadow-[0_0_100px_rgba(34,211,238,.15)] backdrop-blur-xl">
-          <div className="flex items-center justify-between border-b border-cyan-300/15 px-4 py-3 text-[10px] uppercase tracking-[0.25em] text-cyan-100/60"><span>JOTAR.OS / BIOS</span><span className="flex items-center gap-2"><span className="boot-pulse h-2 w-2 rounded-full bg-emerald-300" />SECURE BOOT</span></div>
+          <div className="flex items-center justify-between border-b border-cyan-300/15 px-4 py-3 text-[10px] uppercase tracking-[0.25em] text-cyan-100/60"><span>JOTAR.OS / BIOS</span><span className="flex items-center gap-3"><button onClick={() => selectLanguage("es")} className={language === "es" ? "text-cyan-200" : "text-white/30"}>ES</button><button onClick={() => selectLanguage("en")} className={language === "en" ? "text-cyan-200" : "text-white/30"}>EN</button><span className="boot-pulse h-2 w-2 rounded-full bg-emerald-300" />SECURE BOOT</span></div>
           <div className="grid gap-8 p-5 sm:grid-cols-[150px_1fr] sm:p-8">
             <div className="hidden items-center justify-center sm:flex"><div className="boot-core relative flex h-28 w-28 items-center justify-center rounded-full border border-cyan-300/40"><div className="absolute inset-3 rounded-full border border-violet-300/40" /><div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-300 to-violet-500 shadow-[0_0_35px_rgba(34,211,238,.7)]" /></div></div>
             <div className="relative min-h-[330px] overflow-hidden"><div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-cyan-200/30 shadow-[0_0_14px_#67e8f9]" /><p className="mb-5 text-xs text-cyan-100/60">JotaR.OS // initializing command deck</p><div className="space-y-1.5 text-sm text-emerald-300">{bootLines.slice(0, bootComplete ? currentLine + 1 : currentLine).map((line, index) => <div key={line}><span className="mr-2 text-cyan-300">›</span>{line}<span className="ml-2 text-white/25">[{String(index + 1).padStart(2, "0")}]</span></div>)}{!bootComplete && currentLine < bootLines.length && <div className="flex"><span className="mr-2 text-cyan-300">›</span><Typewriter key={currentLine} text={bootLines[currentLine]} speed={38} onComplete={() => { if (currentLine === bootLines.length - 1) { setBootComplete(true); window.setTimeout(() => setPhase("transition"), 1200); } else window.setTimeout(() => setCurrentLine((line) => line + 1), 220); }} /></div>}</div></div>

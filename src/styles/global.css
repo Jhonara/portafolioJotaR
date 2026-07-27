@@ -26,3 +26,7 @@ html, body, #root {
 }
 .matrix-mode .text-cyan-400, .matrix-mode .text-cyan-300 { color: rgb(74 222 128); }
 .night-mode { filter: saturate(.72) hue-rotate(22deg) brightness(.86); }
+
+/* Keep battle and chooser portals opaque over the desktop windows. */
+.bg-slate-950\/90 { background-color: #020617 !important; }
+.bg-slate-950\/85 { background-color: rgba(2, 6, 23, 0.98) !important; }
