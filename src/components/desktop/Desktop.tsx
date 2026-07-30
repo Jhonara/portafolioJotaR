@@ -18,6 +18,7 @@ import { useDesktopStore } from "../../store/desktop.store";
 import CoffeeOverlay from "./CoffeeOverlay";
 import { useLanguage } from "../../i18n/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import NexoAssistant from "../nexo/NexoAssistant";
 
 const Desktop = () => {
   const desktopRef = useRef<HTMLDivElement>(null);
@@ -59,6 +60,7 @@ const Desktop = () => {
 
       <DesktopClock />
       <CoffeeOverlay />
+      <NexoAssistant />
     </section>
   );
 };
