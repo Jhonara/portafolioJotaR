@@ -8,6 +8,7 @@ import NexoCharacter from "./NexoCharacter";
 import NexoChat from "./NexoChat";
 import { getAmbientMessages, getFallbackAnswer, getPortfolioAnswer } from "./knowledge";
 import type { NexoMessage, NexoMood } from "./types";
+import { useAchievementsStore } from "../../store/achievements.store";
 
 const welcome = { es: "¡Hola! Soy Nexo. Puedo contarte sobre Jhonatan, mostrarte sus proyectos o ayudarte a navegar por el sistema.", en: "Hi! I'm Nexo. I can tell you about Jhonatan, show you his projects, or help you navigate the system." };
 const prompts = { es: ["¿Quién eres?", "¿Qué tecnologías manejas?", "¿Qué proyectos hiciste?", "¿Qué experiencia tienes con Java?"], en: ["Who are you?", "What technologies do you use?", "What projects have you built?", "What Java experience do you have?"] };
@@ -15,6 +16,7 @@ const prompts = { es: ["¿Quién eres?", "¿Qué tecnologías manejas?", "¿Qué
 const NexoAssistant = () => {
   const { language } = useLanguage();
   const { openWindow } = useDesktopStore();
+  const unlock = useAchievementsStore((state) => state.unlock);
   const [open, setOpen] = useState(false); const [bubble, setBubble] = useState(welcome[language]);
   const [mood, setMood] = useState<NexoMood>("idle"); const [messages, setMessages] = useState<NexoMessage[]>([]);
   const [input, setInput] = useState(""); const [isTyping, setIsTyping] = useState(false); const [onLeft, setOnLeft] = useState(false);
@@ -22,6 +24,7 @@ const NexoAssistant = () => {
   const copy = useMemo(() => language === "es" ? { title: "Nexo · guía del sistema", placeholder: "Pregúntale algo a Nexo...", quick: "Preguntas rápidas", close: "Cerrar conversación", send: "Enviar", typing: "Nexo está escribiendo...", welcome: welcome.es } : { title: "Nexo · system guide", placeholder: "Ask Nexo something...", quick: "Quick questions", close: "Close conversation", send: "Send", typing: "Nexo is typing...", welcome: welcome.en }, [language]);
 
   useEffect(() => { setBubble(welcome[language]); setMessages([]); }, [language]);
+  useEffect(() => { if (messages.filter((message) => message.role === "user").length >= 3) unlock("nexo-friend"); }, [messages, unlock]);
   useEffect(() => { const track = (event: MouseEvent) => { lastInteraction.current = Date.now(); setMood((current) => current === "sleepy" ? "happy" : current); setLookAt({ x: Math.max(-3, Math.min(3, (event.clientX / window.innerWidth - .5) * 6)), y: Math.max(-2, Math.min(2, (event.clientY / window.innerHeight - .5) * 4)) }); }; window.addEventListener("mousemove", track, { passive: true }); window.addEventListener("keydown", track as unknown as EventListener); return () => { window.removeEventListener("mousemove", track); window.removeEventListener("keydown", track as unknown as EventListener); }; }, []);
   useEffect(() => { if (open) return; const timer = window.setInterval(() => { const items = getAmbientMessages(language); let index = Math.floor(Math.random() * items.length); if (items.length > 1 && index === lastAmbient.current) index = (index + 1) % items.length; lastAmbient.current = index; setBubble(items[index]); setMood(["happy", "thinking", "surprised"][index % 3] as NexoMood); }, 26000); return () => window.clearInterval(timer); }, [language, open]);
   useEffect(() => { if (open) return; const timer = window.setInterval(() => { setOnLeft((current) => !current); }, 84000); return () => window.clearInterval(timer); }, [open]);

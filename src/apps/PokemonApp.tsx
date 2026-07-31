@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { Crown, Medal, Swords, X, Zap } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
+import { useAchievementsStore } from "../store/achievements.store";
 
 const team = [{ name: "Umbreon", id: 197, type: "SINIESTRO" }, { name: "Crobat", id: 169, type: "VENENO / VOLADOR" }, { name: "Swampert", id: 260, type: "AGUA / TIERRA" }, { name: "Mawile", id: 303, type: "ACERO / HADA" }, { name: "Pawmot", id: 923, type: "ELECTRICO / LUCHA" }, { name: "Ceruledge", id: 937, type: "FUEGO / FANTASMA" }];
 const challengers = [{ name: "Pikachu", id: 25, type: "ELECTRICO" }, { name: "Charizard", id: 6, type: "FUEGO / VOLADOR" }, { name: "Lucario", id: 448, type: "LUCHA / ACERO" }, { name: "Gengar", id: 94, type: "FANTASMA" }, { name: "Greninja", id: 658, type: "AGUA / SINIESTRO" }, { name: "Mewtwo", id: 150, type: "PSIQUICO" }];
@@ -11,9 +12,11 @@ const image = (id: number) => `https://raw.githubusercontent.com/PokeAPI/sprites
 
 export default function PokemonApp() {
   const { t } = useLanguage();
+  const unlock = useAchievementsStore((state) => state.unlock);
   const [chooser, setChooser] = useState(false); const [opponent, setOpponent] = useState<(typeof challengers)[number] | null>(null); const [champion, setChampion] = useState(team[0]); const [playerHp, setPlayerHp] = useState(100); const [championHp, setChampionHp] = useState(100); const [finished, setFinished] = useState<"won" | "lost" | null>(null); const [message, setMessage] = useState(""); const [certificates, setCertificates] = useState(false); const [region, setRegion] = useState("Paldea");
   //const start = (p: (typeof challengers)[number]) => { setOpponent(p); setChampion(team[Math.floor(Math.random() * team.length)]); setPlayerHp(100); setChampionHp(100); setWonChance(Math.random() < .05); setFinished(null); setMessage("¡El combate ha comenzado!"); setChooser(false); };
   const start = (p: (typeof challengers)[number]) => {
+    unlock("pokemon-challenge");
     setOpponent(p);
     setChampion(team[Math.floor(Math.random() * team.length)]);
     setPlayerHp(100);
