@@ -7,6 +7,8 @@ import ContactApp from "./ContactApp";
 import PokemonApp from "./PokemonApp";
 import IncreaseApp from "./IncreaseApp";
 import AchievementsApp from "./AchievementsApp";
+import MailApp from "./MailApp";
+import DocumentsApp from "./DocumentsApp";
 
 export const apps = {
   about: <AboutApp />,
@@ -18,4 +20,6 @@ export const apps = {
   pokemon: <PokemonApp />,
   increase: <IncreaseApp />,
   achievements: <AchievementsApp />,
+  mail: <MailApp />,
+  documents: <DocumentsApp />,
 };

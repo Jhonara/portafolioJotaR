@@ -8,7 +8,7 @@ import {
   Mail,
   Terminal,
   FolderArchive,
-  Images,
+  Files,
 } from "lucide-react";
 
 import WindowManager from "../windows/WindowManager";
@@ -52,8 +52,8 @@ const Desktop = () => {
       <LanguageSwitcher />
       <aside className="absolute left-4 top-24 z-20 hidden flex-col gap-3 sm:flex">
         <QuickAccess icon={<TrophyIcon />} label="Logros" onClick={() => openWindow({ id: "achievements", title: "Logros" })} />
-        <QuickAccess icon={<Images size={21} />} label="Galería" disabled />
-        <QuickAccess icon={<Mail size={21} />} label="Correo" disabled />
+        <QuickAccess icon={<Files size={21} />} label="Documentos" onClick={() => openWindow({ id: "documents", title: "Documentos" })} />
+        <QuickAccess icon={<Mail size={21} />} label="Correo" onClick={() => openWindow({ id: "mail", title: "JotaR Mail" })} />
       </aside>
 
       <motion.div
