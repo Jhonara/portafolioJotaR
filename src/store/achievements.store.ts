@@ -13,7 +13,7 @@ export const useAchievementsStore = create<AchievementStore>((set, get) => ({
     const unlocked = [...get().unlocked, id];
     const notice = { id: crypto.randomUUID(), achievementId: id };
     set((state) => ({ unlocked, notices: [...state.notices, notice] }));
-    try { const audio = new Audio("/sounds/achievement.mp3"); audio.volume = .22; void audio.play().catch(() => undefined); } catch { /* Sound is optional until the file exists. */ }
+    try { const audio = new Audio("/sounds/achievement.mp3"); audio.volume = 1; void audio.play().catch(() => undefined); } catch { /* Sound is optional until the file exists. */ }
   },
   dismiss: (id) => set((state) => ({ notices: state.notices.filter((notice) => notice.id !== id) })),
 }));
