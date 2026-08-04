@@ -40,16 +40,16 @@ html, body, #root {
 @keyframes nexo-dot { 0%, 60%, 100% { transform: translateY(0); opacity: .35; } 30% { transform: translateY(-4px); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .nexo-typing-dots i { animation: none; } }
 
-.skill-tree-canvas .react-flow__pane { cursor: grab; }
-.skill-tree-canvas .react-flow__pane:active { cursor: grabbing; }
-.skill-tree-canvas .react-flow__edge-path { stroke: rgba(168, 192, 210, .18); stroke-width: 1.35; transition: stroke .22s ease, stroke-width .22s ease, opacity .22s ease; }
-.skill-tree-canvas .skill-tree-edge--active .react-flow__edge-path { stroke: #13AB91; stroke-width: 2.6; filter: drop-shadow(0 0 5px rgba(19, 171, 145, .86)); }
-.skill-tree-canvas .skill-tree-edge--active .react-flow__edge-path + * { fill: #13AB91; }
-.skill-tree-node:hover { border-color: var(--skill-color) !important; box-shadow: 0 0 30px color-mix(in srgb, var(--skill-color) 45%, transparent); transform: translateY(-3px) scale(1.04); }
-.skill-tree-node:focus-visible { outline: 2px solid #E92D88; outline-offset: 3px; }
-.skill-tree-canvas .react-flow__edge.animated path { stroke-dasharray: 6; animation: skill-flow .55s linear infinite; }
-@keyframes skill-flow { to { stroke-dashoffset: -12; } }
-.scan-dots { animation: scan-dots 1s steps(4, end) infinite; }
-@keyframes scan-dots { 0%, 20% { clip-path: inset(0 100% 0 0); } 45% { clip-path: inset(0 66% 0 0); } 70% { clip-path: inset(0 33% 0 0); } 100% { clip-path: inset(0 0 0 0); } }
-@media (max-width: 640px) { .skill-tree-canvas { min-height: 460px; } .skill-tree-tooltip { display: none; } }
-@media (prefers-reduced-motion: reduce) { .skill-tree-canvas .react-flow__edge.animated path, .scan-dots { animation: none; } }
+.talent-tree-viewport { scrollbar-color: rgba(19, 171, 145, .48) transparent; scrollbar-width: thin; cursor: grab; }
+.talent-tree-viewport:active { cursor: grabbing; }
+.talent-tree-viewport::-webkit-scrollbar { width: 8px; height: 8px; }
+.talent-tree-viewport::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(19, 171, 145, .42); }
+.talent-tree-stage::before { content: ""; position: absolute; inset: 0; opacity: .32; background-image: radial-gradient(rgba(151, 208, 219, .22) 1px, transparent 1px); background-size: 42px 42px; mask-image: radial-gradient(ellipse at center, black, transparent 76%); }
+.talent-node { isolation: isolate; background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.12), transparent 38%), #071224; }
+.talent-node::after { content: ""; position: absolute; inset: -7px; z-index: -1; border-radius: inherit; border: 1px solid color-mix(in srgb, var(--node-color) 35%, transparent); opacity: .55; }
+.talent-node--locked::after { border-color: rgba(148, 163, 184, .28); }
+.talent-node:focus-visible { outline: 2px solid #E92D88; outline-offset: 4px; }
+.talent-core::after { content: ""; position: absolute; inset: -18px; border: 1px solid rgba(19,171,145,.24); border-radius: inherit; animation: talent-pulse 3s ease-in-out infinite; }
+@keyframes talent-pulse { 50% { transform: scale(1.08); opacity: .35; } }
+@media (max-width: 640px) { .talent-tree-viewport { min-height: 380px; } }
+@media (prefers-reduced-motion: reduce) { .talent-core::after { animation: none; } }
