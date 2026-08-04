@@ -1,24 +1,112 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { FaAngular, FaBootstrap, FaCode, FaCss3Alt, FaDocker, FaGitAlt, FaGithub, FaHtml5, FaJava, FaJsSquare, FaLinux, FaNodeJs, FaPhp, FaReact } from "react-icons/fa";
-import { SiJira, SiMongodb, SiPostgresql, SiSpringboot, SiTailwindcss, SiTypescript, SiVite } from "react-icons/si";
-import type { IconType } from "react-icons";
-import { useLanguage } from "../i18n/LanguageContext";
+import {
+  Background,
+  BackgroundVariant,
+  Controls,
+  MarkerType,
+  ReactFlow,
+  type Edge,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { Cpu, Move, Network } from "lucide-react";
+import SkillDetailPanel from "../components/skills/SkillDetailPanel";
+import SkillNode, { type SkillFlowNode } from "../components/skills/SkillNode";
+import { skillConnections, skillTree, type SkillData } from "../components/skills/skill-tree.data";
 
-type Skill = readonly [string, string, number, IconType, string];
-const skills: readonly Skill[] = [
-  ["Java", "Backend", 78, FaJava, "#f59e0b"], ["Spring Boot", "Backend", 74, SiSpringboot, "#86efac"], ["Maven", "Backend", 65, FaCode, "#c4b5fd"], ["JSON", "Backend", 72, FaCode, "#facc15"], ["XML", "Backend", 60, FaCode, "#fb923c"], ["Node.js", "Backend", 70, FaNodeJs, "#4ade80"], ["Express.js", "Backend", 62, FaCode, "#d1d5db"], ["PHP", "Backend", 58, FaPhp, "#a5b4fc"], ["REST API", "Backend", 76, FaCode, "#67e8f9"],
-  ["React", "Frontend", 76, FaReact, "#67e8f9"], ["Angular", "Frontend", 61, FaAngular, "#fb7185"], ["HTML", "Frontend", 80, FaHtml5, "#fb923c"], ["CSS", "Frontend", 75, FaCss3Alt, "#60a5fa"], ["JavaScript", "Frontend", 75, FaJsSquare, "#fde047"], ["TypeScript", "Frontend", 64, SiTypescript, "#60a5fa"], ["Bootstrap", "Frontend", 68, FaBootstrap, "#c084fc"], ["Material UI", "Frontend", 62, FaCode, "#38bdf8"], ["Tailwind", "Frontend", 70, SiTailwindcss, "#22d3ee"], ["Vite", "Frontend", 71, SiVite, "#c084fc"],
-  ["MySQL", "Data", 62, FaCode, "#38bdf8"], ["SQL", "Data", 68, FaCode, "#facc15"], ["PostgreSQL", "Data", 72, SiPostgresql, "#93c5fd"], ["MongoDB", "Data", 58, SiMongodb, "#86efac"],
-  ["Git", "Tooling", 78, FaGitAlt, "#fb923c"], ["GitHub", "Tooling", 70, FaGithub, "#f8fafc"], ["Postman", "Tooling", 64, FaCode, "#fb923c"], ["Docker", "Tooling", 58, FaDocker, "#60a5fa"], ["Linux", "Tooling", 66, FaLinux, "#facc15"], ["Netlify", "Tooling", 61, FaCode, "#5eead4"], ["Jira", "Tooling", 62, SiJira, "#818cf8"], ["Trello", "Tooling", 58, FaCode, "#60a5fa"], ["IntelliJ IDEA", "Tooling", 66, FaCode, "#f472b6"], ["VS Code", "Tooling", 74, FaCode, "#38bdf8"],
-] as const;
+const nodeTypes = { skill: SkillNode };
 
 const SkillsApp = () => {
-  const { t } = useLanguage();
+  const [isScanning, setIsScanning] = useState(true);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const [active, setActive] = useState(skills[0]);
-  const ActiveIcon = active[3];
-  const groups = ["Backend", "Frontend", "Data", "Tooling"];
-return <div className="text-white"><div className="mb-6"><p className="font-mono text-sm text-cyan-300">// skill_radar.exe</p><h2 className="mt-1 text-3xl font-bold">{t("technicalConstellation")}</h2><p className="mt-2 max-w-2xl text-white/60">{t("skillsDescription")}</p></div><div className="grid gap-6 lg:grid-cols-[270px_1fr]"><div className="relative flex min-h-72 items-center justify-center overflow-hidden rounded-2xl border border-cyan-400/25 bg-slate-950/60"><div className="absolute h-52 w-52 rounded-full border border-cyan-300/15" /><div className="absolute h-36 w-36 rounded-full border border-violet-300/20" /><motion.div animate={{ rotate: 360 }} transition={{ duration: 14, repeat: Infinity, ease: "linear" }} className="absolute h-64 w-64 rounded-full border border-dashed border-violet-300/20" /><div className="relative text-center"><ActiveIcon size={38} style={{ color: active[4] }} className="mx-auto" /><p className="mt-3 font-bold">{active[0]}</p><p className="font-mono text-xs text-white/45">{active[1]} · {active[2]}%</p><div className="mx-auto mt-3 h-1 w-28 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: `${active[2]}%` }} className="h-full rounded-full" style={{ backgroundColor: active[4] }} /></div></div></div><div className="space-y-5">{groups.map((group) => <section key={group}><h3 className="mb-2 font-mono text-xs uppercase tracking-[.2em] text-cyan-200/70">{group}</h3><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{skills.filter((skill) => skill[1] === group).map((skill, index) => { const Icon = skill[3]; const selected = skill[0] === active[0]; return <motion.button key={skill[0]} onMouseEnter={() => setActive(skill)} onFocus={() => setActive(skill)} whileHover={{ scale: 1.03, y: -3 }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * .018 }} className={`flex items-center gap-3 rounded-xl border p-3 text-left transition ${selected ? "border-cyan-300/60 bg-cyan-400/10" : "border-white/10 bg-white/5 hover:border-white/25"}`}><Icon size={25} style={{ color: skill[4] }} /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{skill[0]}</span><span className="mt-1 block h-1 overflow-hidden rounded-full bg-black/30"><span className="block h-full rounded-full" style={{ width: `${skill[2]}%`, backgroundColor: skill[4] }} /></span></span><span className="font-mono text-xs text-white/45">{skill[2]}%</span></motion.button>; })}</div></section>)}</div></div></div>;};
+  useEffect(() => {
+    const timer = window.setTimeout(() => setIsScanning(false), 1000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const connectedIds = useMemo(() => {
+    if (!hoveredId) return new Set<string>();
+    return new Set(skillConnections.filter(([from, to]) => from === hoveredId || to === hoveredId).flat());
+  }, [hoveredId]);
+
+  const nodes = useMemo<SkillFlowNode[]>(() => skillTree.map((skill) => ({
+    id: skill.id,
+    type: "skill",
+    position: skill.position,
+    data: {
+      ...skill,
+      active: connectedIds.has(skill.id),
+      dimmed: Boolean(hoveredId && !connectedIds.has(skill.id)),
+      onHover: setHoveredId,
+      onSelect: setSelectedId,
+    },
+  })), [connectedIds, hoveredId]);
+
+  const edges = useMemo<Edge[]>(() => skillConnections.map(([source, target]) => {
+    const related = Boolean(hoveredId && (source === hoveredId || target === hoveredId));
+    return {
+      id: `${source}-${target}`,
+      source,
+      target,
+      type: "smoothstep",
+      animated: related,
+      markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
+      className: related ? "skill-tree-edge skill-tree-edge--active" : "skill-tree-edge",
+    };
+  }), [hoveredId]);
+
+  const selectedSkill: SkillData | null = selectedId ? skillTree.find((skill) => skill.id === selectedId) ?? null : null;
+
+  return (
+    <div className="text-white">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="font-mono text-xs tracking-[.2em] text-[#13AB91]">// TECH_SKILL_TREE.EXE</p>
+          <h2 className="mt-1 text-3xl font-bold tracking-tight">Árbol de habilidades</h2>
+          <p className="mt-2 max-w-2xl text-sm text-white/55">Explora las tecnologías, sus conexiones y las misiones en las que las he utilizado.</p>
+        </div>
+        <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[.14em] text-white/45">
+          <span className="flex items-center gap-1.5"><Network size={13} className="text-[#E92D88]" /> {skillTree.length} nodos</span>
+          <span className="flex items-center gap-1.5"><Move size={13} className="text-[#13AB91]" /> arrastra para explorar</span>
+        </div>
+      </div>
+
+      <div className="skill-tree-canvas relative h-[min(680px,calc(100vh-210px))] min-h-[500px] overflow-hidden rounded-3xl border border-white/10 bg-[#040a17] shadow-[0_0_48px_rgba(19,171,145,.12)]">
+        <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_25%_15%,rgba(19,171,145,.1),transparent_28%),radial-gradient(circle_at_75%_75%,rgba(233,45,136,.09),transparent_32%)]" />
+        {isScanning ? (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-30 grid place-items-center bg-[#040a17]/96 backdrop-blur-sm">
+            <div className="text-center">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.25, repeat: Infinity, ease: "linear" }} className="mx-auto grid h-16 w-16 place-items-center rounded-full border border-[#13AB91]/45 border-t-[#E92D88] shadow-[0_0_30px_rgba(19,171,145,.26)]"><Cpu className="text-[#13AB91]" size={24} /></motion.div>
+              <p className="mt-5 font-mono text-sm tracking-[.22em] text-cyan-50">SCANNING SKILLS<span className="scan-dots">...</span></p>
+              <div className="mt-3 h-px w-56 overflow-hidden bg-white/10"><motion.div initial={{ x: "-100%" }} animate={{ x: "100%" }} transition={{ duration: .85, repeat: Infinity, ease: "easeInOut" }} className="h-full w-2/5 bg-gradient-to-r from-transparent via-[#13AB91] to-[#E92D88]" /></div>
+            </div>
+          </motion.div>
+        ) : (
+          <ReactFlow<SkillFlowNode>
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            fitView
+            fitViewOptions={{ padding: 0.18, maxZoom: 0.92 }}
+            minZoom={0.25}
+            maxZoom={1.3}
+            nodesDraggable={false}
+            nodesConnectable={false}
+            elementsSelectable={false}
+            onNodeClick={(_, node) => setSelectedId(node.id)}
+            proOptions={{ hideAttribution: true }}
+          >
+            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgba(114, 235, 220, .14)" />
+            <Controls showInteractive={false} className="!bottom-4 !left-4 !border-white/10 !bg-[#071224]/90 [&>button]:!border-white/10 [&>button]:!bg-transparent [&>button]:!fill-white/65 [&>button:hover]:!bg-white/10" />
+          </ReactFlow>
+        )}
+        {!isScanning && <p className="pointer-events-none absolute bottom-4 right-5 z-10 hidden rounded-full border border-white/10 bg-[#071224]/85 px-3 py-1.5 font-mono text-[10px] text-white/45 md:block">HOVER · ANALIZAR &nbsp; CLICK · ABRIR REGISTRO</p>}
+        <SkillDetailPanel skill={selectedSkill} onClose={() => setSelectedId(null)} />
+      </div>
+    </div>
+  );
+};
 
 export default SkillsApp;

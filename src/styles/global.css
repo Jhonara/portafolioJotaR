@@ -39,3 +39,17 @@ html, body, #root {
 .nexo-typing-dots i:nth-child(3) { animation-delay: .32s; }
 @keyframes nexo-dot { 0%, 60%, 100% { transform: translateY(0); opacity: .35; } 30% { transform: translateY(-4px); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .nexo-typing-dots i { animation: none; } }
+
+.skill-tree-canvas .react-flow__pane { cursor: grab; }
+.skill-tree-canvas .react-flow__pane:active { cursor: grabbing; }
+.skill-tree-canvas .react-flow__edge-path { stroke: rgba(168, 192, 210, .18); stroke-width: 1.35; transition: stroke .22s ease, stroke-width .22s ease, opacity .22s ease; }
+.skill-tree-canvas .skill-tree-edge--active .react-flow__edge-path { stroke: #13AB91; stroke-width: 2.6; filter: drop-shadow(0 0 5px rgba(19, 171, 145, .86)); }
+.skill-tree-canvas .skill-tree-edge--active .react-flow__edge-path + * { fill: #13AB91; }
+.skill-tree-node:hover { border-color: var(--skill-color) !important; box-shadow: 0 0 30px color-mix(in srgb, var(--skill-color) 45%, transparent); transform: translateY(-3px) scale(1.04); }
+.skill-tree-node:focus-visible { outline: 2px solid #E92D88; outline-offset: 3px; }
+.skill-tree-canvas .react-flow__edge.animated path { stroke-dasharray: 6; animation: skill-flow .55s linear infinite; }
+@keyframes skill-flow { to { stroke-dashoffset: -12; } }
+.scan-dots { animation: scan-dots 1s steps(4, end) infinite; }
+@keyframes scan-dots { 0%, 20% { clip-path: inset(0 100% 0 0); } 45% { clip-path: inset(0 66% 0 0); } 70% { clip-path: inset(0 33% 0 0); } 100% { clip-path: inset(0 0 0 0); } }
+@media (max-width: 640px) { .skill-tree-canvas { min-height: 460px; } .skill-tree-tooltip { display: none; } }
+@media (prefers-reduced-motion: reduce) { .skill-tree-canvas .react-flow__edge.animated path, .scan-dots { animation: none; } }
