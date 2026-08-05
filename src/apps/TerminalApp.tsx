@@ -6,7 +6,7 @@ import { useDesktopStore } from "../store/desktop.store";
 
 type TerminalEffect = "matrix" | "night" | "neon" | "java" | "coffee" | "hire" | "whoami" | null;
 
-const help = "Comandos: help, whoami, about, projects, pokemon, java, coffee, matrix, night, neon, sudo hire jhonatan, increase, clear.";
+const help = "Comandos: help,  java, coffee, pokemon, increase, whoami, about, projects, java, coffee, matrix, night, neon, sudo hire jhonatan, clear.";
 const responses: Record<string, string> = {
   whoami: "Identidad verificada: Jhonatan Ramírez Useche — Ingeniero de Sistemas y Full Stack Developer.",
   java: "JVM online: Spring Boot power unlocked.", coffee: "Caffeine protocol iniciado. Pair programming fuel ready.",

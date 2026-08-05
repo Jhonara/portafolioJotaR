@@ -9,6 +9,7 @@ import NexoChat from "./NexoChat";
 import { getAmbientMessages, getFallbackAnswer, getPortfolioAnswer } from "./knowledge";
 import type { NexoMessage, NexoMood } from "./types";
 import { useAchievementsStore } from "../../store/achievements.store";
+import type { NexoContextMessage } from "./context";
 
 const welcome = { es: "¡Hola! Soy Nexo. Puedo contarte sobre Jhonatan, mostrarte sus proyectos o ayudarte a recorrer el sistema.", en: "Hi! I'm Nexo. I can tell you about Jhonatan, show you his projects, or help you explore the system." };
 const prompts = { es: ["¿Quién eres?", "¿Qué tecnologías maneja?", "¿Qué proyectos ha hecho?", "¿Qué experiencia tiene con Java?"], en: ["Who are you?", "What technologies does he use?", "What projects has he built?", "What Java experience does he have?"] };
@@ -46,6 +47,16 @@ const NexoAssistant = () => {
     const reset = window.setTimeout(() => { setBubble(welcome[language]); setMessages([]); }, 0);
     return () => window.clearTimeout(reset);
   }, [language]);
+  useEffect(() => {
+    const announce = (event: Event) => {
+      const { text, mood: nextMood } = (event as CustomEvent<NexoContextMessage>).detail;
+      lastInteraction.current = Date.now();
+      setBubble(text); setMood(nextMood); speakForAMoment();
+      if (open) setMessages((current) => [...current, { id: crypto.randomUUID(), role: "nexo" as const, text }].slice(-20));
+    };
+    window.addEventListener("nexo:context", announce);
+    return () => window.removeEventListener("nexo:context", announce);
+  }, [open]);
   useEffect(() => { if (messages.filter((message) => message.role === "user").length >= 3) unlock("nexo-friend"); }, [messages, unlock]);
   useEffect(() => {
     const track = (event: MouseEvent) => {

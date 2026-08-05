@@ -65,3 +65,7 @@ html, body, #root {
 @keyframes career-orbit { to { rotate: 360deg; } }
 @media (max-width: 640px) { .career-viewport { min-height: 460px; } .career-card { max-width: 100%; } .campaign-chapter { align-items: flex-start; } .career-chapter-aura::before { right: -19rem; } }
 @media (prefers-reduced-motion: reduce) { .career-chapter-aura::after { animation: none; } }
+
+.about-scan-dots { animation: about-dots 1s steps(4, end) infinite; }
+@keyframes about-dots { 0%, 20% { clip-path: inset(0 100% 0 0); } 45% { clip-path: inset(0 66% 0 0); } 70% { clip-path: inset(0 33% 0 0); } 100% { clip-path: inset(0 0 0 0); } }
+@media (prefers-reduced-motion: reduce) { .about-scan-dots { animation: none; } }
