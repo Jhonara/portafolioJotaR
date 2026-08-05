@@ -53,3 +53,15 @@ html, body, #root {
 @keyframes talent-pulse { 50% { transform: scale(1.08); opacity: .35; } }
 @media (max-width: 640px) { .talent-tree-viewport { min-height: 380px; } }
 @media (prefers-reduced-motion: reduce) { .talent-core::after { animation: none; } }
+
+.career-viewport { scrollbar-color: rgba(19, 171, 145, .42) transparent; scrollbar-width: thin; }
+.career-viewport::-webkit-scrollbar { width: 7px; }
+.career-viewport::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(19, 171, 145, .42); }
+.campaign-chapter { background: radial-gradient(circle at 72% 48%, var(--chapter-accent, rgba(19,171,145,.08)), transparent 32%), linear-gradient(135deg, rgba(7,18,36,.82), #030813 72%); }
+.career-chapter-aura::before, .career-chapter-aura::after { content: ""; position: absolute; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--chapter-color) 25%, transparent); opacity: .55; }
+.career-chapter-aura::before { width: 34rem; height: 34rem; right: -12rem; top: 50%; transform: translateY(-50%); box-shadow: 0 0 100px var(--chapter-accent); }
+.career-chapter-aura::after { width: 18rem; height: 18rem; right: 6rem; top: 50%; transform: translateY(-50%); border-style: dashed; animation: career-orbit 18s linear infinite; }
+.career-card-face { transform-style: preserve-3d; }
+@keyframes career-orbit { to { rotate: 360deg; } }
+@media (max-width: 640px) { .career-viewport { min-height: 460px; } .career-card { max-width: 100%; } .campaign-chapter { align-items: flex-start; } .career-chapter-aura::before { right: -19rem; } }
+@media (prefers-reduced-motion: reduce) { .career-chapter-aura::after { animation: none; } }

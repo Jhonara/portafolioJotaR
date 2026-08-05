@@ -48,7 +48,7 @@ const getWindowDimensions = (windowId: string) => {
   const viewportWidth = typeof window === "undefined" ? 1440 : window.innerWidth;
   const viewportHeight = typeof window === "undefined" ? 900 : window.innerHeight;
 
-  if (windowId === "skills") {
+  if (windowId === "skills" || windowId === "experience") {
     return {
       width: Math.min(1180, Math.max(320, viewportWidth - 32)),
       height: Math.min(760, Math.max(420, viewportHeight - 44)),
@@ -100,8 +100,8 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
                   minimizing: false,
                   width: dimensions.width,
                   height: dimensions.height,
-                  x: window.id === "skills" ? position.x : w.x,
-                  y: window.id === "skills" ? position.y : w.y,
+                  x: window.id === "skills" || window.id === "experience" ? position.x : w.x,
+                  y: window.id === "skills" || window.id === "experience" ? position.y : w.y,
                   zIndex: highest + 1
                 }
               : w
