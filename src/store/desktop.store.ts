@@ -44,9 +44,16 @@ interface DesktopStore {
   activateCoffee: () => void;
 }
 
-const getWindowDimensions = () => {
+const getWindowDimensions = (windowId: string) => {
   const viewportWidth = typeof window === "undefined" ? 1440 : window.innerWidth;
   const viewportHeight = typeof window === "undefined" ? 900 : window.innerHeight;
+
+  if (windowId === "skills") {
+    return {
+      width: Math.min(1180, Math.max(320, viewportWidth - 32)),
+      height: Math.min(760, Math.max(420, viewportHeight - 44)),
+    };
+  }
 
   return {
     width: Math.min(900, Math.max(320, viewportWidth - 48)),
@@ -79,6 +86,8 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
       if (exists) {
 
         const highest = Math.max(...state.windows.map(w => w.zIndex));
+        const dimensions = getWindowDimensions(window.id);
+        const position = getInitialPosition(state.windows.indexOf(exists), dimensions.width, dimensions.height);
 
         return {
 
@@ -89,6 +98,10 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
                   opened: true,
                   minimized: false,
                   minimizing: false,
+                  width: dimensions.width,
+                  height: dimensions.height,
+                  x: window.id === "skills" ? position.x : w.x,
+                  y: window.id === "skills" ? position.y : w.y,
                   zIndex: highest + 1
                 }
               : w
@@ -103,7 +116,7 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
           ? Math.max(...state.windows.map(w => w.zIndex))
           : 0;
 
-      const dimensions = getWindowDimensions();
+      const dimensions = getWindowDimensions(window.id);
       const position = getInitialPosition(state.windows.length, dimensions.width, dimensions.height);
 
       return {

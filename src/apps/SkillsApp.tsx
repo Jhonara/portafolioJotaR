@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import { motion } from "framer-motion";
 import { Move, Sparkles } from "lucide-react";
 import SkillDetailPanel from "../components/skills/SkillDetailPanel";
@@ -9,7 +9,7 @@ type Point = { x: number; y: number };
 type TalentNode = SkillData & Point & { branchIndex: number };
 type TalentEdge = { id: string; branch: TalentBranch; from: Point; to: Point; index: number };
 
-const STAGE = { width: 1500, height: 1400, core: { x: 750, y: 1160 } };
+const STAGE = { width: 1500, height: 1800, core: { x: 750, y: 1550 } };
 const branchStyle: Record<TalentBranch, { label: string; color: string }> = {
   backend: { label: "BACKEND", color: "#13AB91" },
   tools: { label: "DATA & TOOLS", color: "#f4c95d" },
@@ -24,10 +24,10 @@ const frontendPoints: Point[] = [
   { x: 890, y: 1325 }, { x: 1030, y: 1220 }, { x: 1170, y: 1110 }, { x: 1320, y: 985 }, { x: 1375, y: 835 }, { x: 1295, y: 680 },
   { x: 1155, y: 575 }, { x: 1015, y: 465 }, { x: 925, y: 310 }, { x: 1030, y: 165 }, { x: 1175, y: 105 }, { x: 1320, y: 70 },
 ];
-const elevate = (point: Point): Point => ({ ...point, y: Math.max(60, point.y - 200) });
+const elevate = (point: Point): Point => point;
 const toolPoint = (index: number): Point => ({
   x: 750 + Math.sin(index * 1.65) * (index % 3 === 0 ? 105 : 65),
-  y: 1065 - index * 43,
+  y: 1450 - index * 60,
 });
 
 const pathBetween = (from: Point, to: Point) => {
@@ -53,6 +53,7 @@ const makeTree = (): { nodes: TalentNode[]; edges: TalentEdge[] } => {
 
 const TalentTree = () => {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { nodes, edges } = useMemo(makeTree, []);
@@ -73,9 +74,24 @@ const TalentTree = () => {
   }, [hovered]);
   const selectedSkill = selectedId ? skillById.get(selectedId) ?? null : null;
 
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest("button")) return;
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    viewport.setPointerCapture(event.pointerId);
+    dragRef.current = { x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+  };
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const viewport = viewportRef.current;
+    if (!viewport || !dragRef.current) return;
+    viewport.scrollLeft = dragRef.current.left - (event.clientX - dragRef.current.x);
+    viewport.scrollTop = dragRef.current.top - (event.clientY - dragRef.current.y);
+  };
+  const stopDragging = () => { dragRef.current = null; };
+
   return <div className="talent-tree-shell relative overflow-hidden rounded-3xl border border-white/10 bg-[#030813] shadow-[0_0_55px_rgba(19,171,145,.11)]">
     <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_92%,rgba(19,171,145,.11),transparent_27%),radial-gradient(circle_at_10%_42%,rgba(19,171,145,.06),transparent_25%),radial-gradient(circle_at_90%_42%,rgba(233,45,136,.07),transparent_25%)]" />
-    <div ref={viewportRef} className="talent-tree-viewport relative h-[min(610px,calc(100vh-250px))] min-h-[410px] overflow-auto">
+    <div ref={viewportRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={stopDragging} onPointerCancel={stopDragging} className="talent-tree-viewport relative h-[min(760px,calc(100vh-180px))] min-h-[460px] overflow-auto">
       <div className="talent-tree-stage relative" style={{ width: STAGE.width, height: STAGE.height }}>
         <svg className="pointer-events-none absolute inset-0 overflow-visible" width={STAGE.width} height={STAGE.height} viewBox={`0 0 ${STAGE.width} ${STAGE.height}`} aria-hidden="true">
           {edges.map((edge) => {
@@ -90,7 +106,7 @@ const TalentTree = () => {
           <span className="absolute -bottom-9 w-44 text-center font-mono text-xs font-bold tracking-[.17em] text-cyan-50">DEVELOPER CORE</span>
         </motion.div>
 
-        {(Object.keys(branchStyle) as TalentBranch[]).map((branch) => <span key={branch} className="pointer-events-none absolute font-mono text-xs font-bold tracking-[.3em]" style={{ color: branchStyle[branch].color, left: branch === "backend" ? 100 : branch === "tools" ? 675 : 1210, top: branch === "backend" || branch === "frontend" ? 1100 : 995 }}>{branchStyle[branch].label}</span>)}
+        {(Object.keys(branchStyle) as TalentBranch[]).map((branch) => <span key={branch} className="pointer-events-none absolute font-mono text-xs font-bold tracking-[.3em]" style={{ color: branchStyle[branch].color, left: branch === "backend" ? 100 : branch === "tools" ? 675 : 1210, top: branch === "backend" || branch === "frontend" ? 1375 : 1350 }}>{branchStyle[branch].label}</span>)}
 
         {nodes.map((node, index) => <SkillNode key={node.id} skill={node} x={node.x} y={node.y} index={index} active={activePath.has(node.id)} dimmed={Boolean(hovered && !activePath.has(node.id))} onHover={setHoveredId} onSelect={setSelectedId} />)}
       </div>
