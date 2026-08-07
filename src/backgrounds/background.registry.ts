@@ -38,6 +38,24 @@ export const backgroundRegistry: BackgroundDefinition[] = [
     performance: "cinematic",
     component: lazy(() => import("./SignalCathedral")),
   },
+  {
+    id: "palimpsest-vault",
+    name: "Palimpsest Vault",
+    description: "La cámara donde el sistema reescribe su memoria como una arquitectura cinética de folios suspendidos.",
+    renderer: "webgl",
+    accent: "magenta",
+    performance: "cinematic",
+    component: lazy(() => import("./PalimpsestVault")),
+  },
+  {
+    id: "mirror-protocol",
+    name: "Mirror Protocol",
+    description: "El avatar del operador ejecuta una calibración cinética sobre un espejo de memoria.",
+    renderer: "webgl",
+    accent: "cyan",
+    performance: "cinematic",
+    component: lazy(() => import("./MirrorProtocol")),
+  },
 ];
 
 export const backgroundById = new Map(backgroundRegistry.map((background) => [background.id, background]));

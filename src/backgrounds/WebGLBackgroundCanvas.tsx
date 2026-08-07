@@ -18,6 +18,7 @@ const AdaptiveScene = ({ Scene }: Props) => {
 const WebGLBackgroundCanvas = ({ Scene }: Props) => <Canvas
   className="pointer-events-none absolute inset-0"
   dpr={[1, 1.5]}
+  shadows="soft"
   gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
   camera={{ fov: 48, position: [0, 0, 8] }}
 >
