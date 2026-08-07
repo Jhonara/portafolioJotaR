@@ -25,6 +25,7 @@ const Window = ({
     minimizeWindow,
     maximizeWindow,
   } = useDesktopStore();
+  const usesInternalScroll = ["skills", "experience", "contact", "mail", "documents", "pokemon"].includes(id);
 
   return (
     <div
@@ -87,7 +88,7 @@ const Window = ({
         <div className="w-14" />
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto p-6">
+      <div className={`min-h-0 flex-1 p-6 ${usesInternalScroll ? "overflow-hidden" : "overflow-auto"}`}>
         {children}
       </div>
     </div>

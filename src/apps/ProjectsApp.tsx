@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ExternalLink, FolderGit2, Gamepad2, Globe2, MessageSquareText, MonitorCog, X } from "lucide-react";
+import { ExternalLink, FolderGit2, Gamepad2, Globe2, Inbox, InspectionPanel, MessageSquareText, MonitorCog, X } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 
 type Project = { name: string; description: string; tags: string[]; icon: typeof Gamepad2; demo?: string; repo: string; accent: string; preview: string };
@@ -29,6 +29,26 @@ const ProjectsApp = () => {
     preview: "previewCoop",
   },
   {
+    name: "Coopcompartir v1",
+    description: "projectCoopV1",
+    tags: ["Html", "Css", "JavaScript"],
+    icon: Inbox,
+    demo: "http://cooperativacoompartir.com/index.html",
+    repo: "https://github.com/Jhonara/PaginaCoopV1",
+    accent: "from-pink-400/35 via-blue-500/10",
+    preview: "previewCoop",
+  },
+  {
+    name: "Proyecto de finanzas",
+    description: "projectFinance",
+    tags: ["Spring Boot", "React", "Sql"],
+    icon: InspectionPanel,
+    demo: "Proximamente",
+    repo: "https://github.com/Jhonara/finance-personal",
+    accent: "from-orange-400/35 via-orange-500/10",
+    preview: "previewCoop",
+  },
+  {
     name: "Bot WhatsApp",
     description: "projectBot",
     tags: ["Node.js", "Bot", "JavaScript"],
@@ -38,12 +58,22 @@ const ProjectsApp = () => {
     preview: "previewBot",
   },
   {
+    name: "Mi Primer Portafolio",
+    description: "Mi primer portafolio web personal, desarrollado con React y Tailwind CSS.",
+    tags: ["React", "TypeScript", "Tailwind CSS"],
+    icon: FolderGit2,
+    demo: "https://portafolio-jru.netlify.app",
+    repo: "https://github.com/Jhonara/jhonara.github.io",
+    accent: "from-violet-400/35 via-purple-500/10",
+    preview: "previewPortfolio",
+  },
+  {
     name: "JotaR.OS",
     description: "projectJotar",
     tags: ["React", "Framer Motion", "GSAP"],
     icon: Globe2,
     repo: "https://github.com/Jhonara",
-    accent: "from-violet-400/35 via-cyan-500/10",
+    accent: "from-yellow-400/35 via-cyan-500/10",
     preview: "previewJotar",
   },
 ];

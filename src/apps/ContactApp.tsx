@@ -16,12 +16,6 @@ const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 const publicKey = import.meta.env.VITE_EMAILJS_USER_ID;
 
-console.log({
-  serviceId,
-  templateId,
-  publicKey,
-});
-
 const ContactApp = () => {
   const { t } = useLanguage();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle"); const [name, setName] = useState(""); const [email, setEmail] = useState(""); const [subject, setSubject] = useState(""); const [message, setMessage] = useState("");

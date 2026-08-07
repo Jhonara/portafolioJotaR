@@ -9,7 +9,7 @@ type Point = { x: number; y: number };
 type TalentNode = SkillData & Point & { branchIndex: number };
 type TalentEdge = { id: string; branch: TalentBranch; from: Point; to: Point; index: number };
 
-const STAGE = { width: 1500, height: 1800, core: { x: 750, y: 1550 } };
+const STAGE = { width: 1200, height: 1800, core: { x: 750, y: 1550 } };
 const branchStyle: Record<TalentBranch, { label: string; color: string }> = {
   backend: { label: "BACKEND", color: "#13AB91" },
   tools: { label: "DATA & TOOLS", color: "#f4c95d" },
@@ -17,18 +17,71 @@ const branchStyle: Record<TalentBranch, { label: string; color: string }> = {
 };
 
 const backendPoints: Point[] = [
-  { x: 610, y: 1325 }, { x: 470, y: 1220 }, { x: 330, y: 1110 }, { x: 180, y: 985 }, { x: 125, y: 835 },
-  { x: 205, y: 680 }, { x: 345, y: 575 }, { x: 485, y: 465 }, { x: 575, y: 310 }, { x: 470, y: 165 },
+  { x: 620, y: 1390 }, // Java
+  { x: 520, y: 1260 }, // Spring Boot
+  { x: 400, y: 1130 }, // REST
+  { x: 290, y: 990 },  // JPA
+  { x: 200, y: 840 },  // Maven
+  { x: 250, y: 670 },  // PHP
+  { x: 380, y: 550 },  // Node
+  { x: 320, y: 400 },  // Express
+  { x: 250, y: 220 },  // Nest
+  { x: 380, y: 80 },   // Laravel
 ];
+
 const frontendPoints: Point[] = [
-  { x: 890, y: 1325 }, { x: 1030, y: 1220 }, { x: 1170, y: 1110 }, { x: 1320, y: 985 }, { x: 1375, y: 835 }, { x: 1295, y: 680 },
-  { x: 1155, y: 575 }, { x: 1015, y: 465 }, { x: 925, y: 310 }, { x: 1030, y: 165 }, { x: 1175, y: 105 }, { x: 1320, y: 70 },
+  { x: 880, y: 1390 }, // HTML
+  { x: 980, y: 1260 }, // CSS
+  { x: 1100, y: 1130 }, // JS
+  { x: 1210, y: 990 }, // TS
+  { x: 1310, y: 840 }, // React
+  { x: 1260, y: 670 }, // Vite
+  { x: 1160, y: 500 }, // Tailwind
+  { x: 1200, y: 360 }, // MUI
+  { x: 1340, y: 300 },  // Angular
+  { x: 1300, y: 200 },  // Next
+  { x: 1170, y: 130 },  // Vue
+  { x: 1280, y: 70 }, // Svelte
 ];
 const elevate = (point: Point): Point => point;
-const toolPoint = (index: number): Point => ({
-  x: 750 + Math.sin(index * 1.65) * (index % 3 === 0 ? 105 : 65),
-  y: 1450 - index * 60,
-});
+const toolPoints: Point[] = [
+
+  { x: 750, y: 1420 }, // SQL
+
+  { x: 680, y: 1300 }, // PostgreSQL
+  { x: 820, y: 1280 }, // MySQL
+
+  { x: 610, y: 1210 }, // Mongo
+  { x: 890, y: 1210 }, // Git
+
+  { x: 560, y: 1070 }, // GitHub
+  { x: 940, y: 1070 }, // Docker
+
+  { x: 610, y: 920 },  // Linux
+  { x: 890, y: 920 },  // Postman
+
+  { x: 670, y: 760 },  // Jira
+  { x: 830, y: 760 },  // VSCode
+
+  { x: 600, y: 600 },  // IntelliJ
+  { x: 890, y: 600 },  // Netlify
+
+  // FUTURAS
+
+  { x: 590, y: 450 }, // Redis
+  { x: 710, y: 450 }, // Rabbit
+  { x: 830, y: 450 }, // Kafka
+  { x: 950, y: 450 }, // Elasticsearch
+
+  { x: 560, y: 300 }, // Grafana
+  { x: 690, y: 300 }, // Prometheus
+  { x: 840, y: 300 }, // AWS
+  { x: 990, y: 300 }, // Kubernetes
+
+  { x: 610, y: 150 }, // Jenkins
+  { x: 750, y: 80 },  // Terraform
+  { x: 890, y: 150 }, // n8n
+];
 
 const pathBetween = (from: Point, to: Point) => {
   const bend = Math.max(55, Math.abs(from.y - to.y) * .52);
@@ -36,7 +89,7 @@ const pathBetween = (from: Point, to: Point) => {
 };
 
 const makeTree = (): { nodes: TalentNode[]; edges: TalentEdge[] } => {
-  const pointSets: Record<TalentBranch, Point[]> = { backend: backendPoints.map(elevate), frontend: frontendPoints.map(elevate), tools: branches.tools.map((_, index) => toolPoint(index)) };
+  const pointSets: Record<TalentBranch, Point[]> = { backend: backendPoints.map(elevate), frontend: frontendPoints.map(elevate), tools: toolPoints };
   const nodes: TalentNode[] = [];
   const edges: TalentEdge[] = [];
   (Object.keys(branches) as TalentBranch[]).forEach((branch) => {
@@ -89,9 +142,9 @@ const TalentTree = () => {
   };
   const stopDragging = () => { dragRef.current = null; };
 
-  return <div className="talent-tree-shell relative overflow-hidden rounded-3xl border border-white/10 bg-[#030813] shadow-[0_0_55px_rgba(19,171,145,.11)]">
+  return <div className="talent-tree-shell relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-white/10 bg-[#030813] shadow-[0_0_55px_rgba(19,171,145,.11)]">
     <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_92%,rgba(19,171,145,.11),transparent_27%),radial-gradient(circle_at_10%_42%,rgba(19,171,145,.06),transparent_25%),radial-gradient(circle_at_90%_42%,rgba(233,45,136,.07),transparent_25%)]" />
-    <div ref={viewportRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={stopDragging} onPointerCancel={stopDragging} className="talent-tree-viewport relative h-[min(760px,calc(100vh-180px))] min-h-[460px] overflow-auto">
+    <div ref={viewportRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={stopDragging} onPointerCancel={stopDragging} className="talent-tree-viewport relative h-full min-h-0 overflow-auto">
       <div className="talent-tree-stage relative" style={{ width: STAGE.width, height: STAGE.height }}>
         <svg className="pointer-events-none absolute inset-0 overflow-visible" width={STAGE.width} height={STAGE.height} viewBox={`0 0 ${STAGE.width} ${STAGE.height}`} aria-hidden="true">
           {edges.map((edge) => {
@@ -116,8 +169,8 @@ const TalentTree = () => {
   </div>;
 };
 
-const SkillsApp = () => <div className="text-white">
-  <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+const SkillsApp = () => <div className="flex h-full min-h-0 flex-col text-white">
+  <div className="mb-5 shrink-0 flex flex-wrap items-end justify-between gap-4">
     <div><p className="font-mono text-xs tracking-[.2em] text-[#13AB91]">// TALENT_TREE.SYS</p><h2 className="mt-1 text-3xl font-bold tracking-tight">Árbol de habilidades</h2><p className="mt-2 max-w-2xl text-sm text-white/55">Un mapa de talentos vivo: tres caminos, conexiones únicas y el siguiente nivel todavía por desbloquear.</p></div>
     <p className="font-mono text-[10px] uppercase tracking-[.16em] text-white/45">{skillById.size} talentos · 3 rutas maestras</p>
   </div>

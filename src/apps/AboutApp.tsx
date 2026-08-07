@@ -6,7 +6,7 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { aboutNexoMessages, announceNexoContext } from "../components/nexo/context";
 
 type Module = "identity" | "timeline" | "values" | "facts";
-const rpgStats = [["Backend", 5, Code2], ["Frontend", 4, Sparkles], ["Bases de datos", 4, Database], ["Arquitectura", 3, GitBranch], ["Aprendizaje", 5, Brain], ["Curiosidad", 5, Star]] as const;
+const rpgStats = [["Debugging", 4, Code2], ["Refactoring", 5, Sparkles], ["Clean Code", 4, Database], ["Creatividad", 4, GitBranch], ["Lógica", 5, Brain], ["Pruebas", 3, Star]] as const;
 const moduleTabs: Array<{ id: Module; label: string }> = [{ id: "identity", label: "Identity" }, { id: "timeline", label: "Timeline" }, { id: "values", label: "Values" }, { id: "facts", label: "Fun Facts" }];
 const reveal = { hidden: { opacity: 0, y: 18, filter: "blur(6px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)" } };
 

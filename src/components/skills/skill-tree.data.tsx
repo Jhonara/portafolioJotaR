@@ -41,28 +41,28 @@ const buildSkill = (name: string, branch: TalentBranch, icon: IconType, known = 
 };
 
 const backend = [
-  buildSkill("Java", "backend", FaJava, true, { experience: "2+ años", level: 5, description: "Lenguaje base para servicios robustos y lógica de negocio." }),
-  buildSkill("Spring Boot", "backend", SiSpringboot, true, { experience: "2+ años", level: 5, description: "Servicios backend escalables con arquitectura por capas." }),
-  buildSkill("REST API", "backend", FaCode, true, { experience: "2+ años", level: 5, description: "Diseño e integración de APIs claras y mantenibles." }),
+  buildSkill("Java", "backend", FaJava, true, { experience: "3+ años", level: 5, description: "Lenguaje base para servicios robustos y lógica de negocio." }),
+  buildSkill("Spring Boot", "backend", SiSpringboot, true, { experience: "3+ años", level: 5, description: "Servicios backend escalables con arquitectura por capas." }),
+  buildSkill("REST API", "backend", FaCode, true, { experience: "3+ años", level: 5, description: "Diseño e integración de APIs claras y mantenibles." }),
   buildSkill("JPA", "backend", FaCode, true, { description: "Persistencia y acceso a datos para servicios Java." }),
-  buildSkill("Maven", "backend", FaJava, true, { description: "Gestión de dependencias y construcción de proyectos Java." }),
-  buildSkill("PHP", "backend", FaPhp, true, { description: "Desarrollo y mantenimiento de soluciones web del lado del servidor." }),
-  buildSkill("Node.js", "backend", FaNodeJs, true, { experience: "2 años", description: "Runtime para automatizaciones y servicios JavaScript." }),
-  buildSkill("Express", "backend", SiExpress, true, { description: "Framework ligero para rutas y APIs en Node.js." }),
+  buildSkill("Maven", "backend", FaJava, true, {experience: "3+ años", description: "Gestión de dependencias y construcción de proyectos Java." }),
+  buildSkill("PHP", "backend", FaPhp, true, {experience: "3+ años", description: "Desarrollo y mantenimiento de soluciones web del lado del servidor." }),
+  buildSkill("Node.js", "backend", FaNodeJs, true, { experience: "1+ años", level: 2, description: "Runtime para automatizaciones y servicios JavaScript." }),
+  buildSkill("Express", "backend", SiExpress, true, { level: 2, description: "Framework ligero para rutas y APIs en Node.js." }),
   buildSkill("NestJS", "backend", FaNodeJs, false),
   buildSkill("Laravel", "backend", FaPhp, false),
 ];
 
 const frontend = [
   buildSkill("HTML", "frontend", FaHtml5, true, { experience: "3+ años", level: 5, description: "Estructura semántica para experiencias web accesibles." }),
-  buildSkill("CSS", "frontend", FaCss3Alt, true, { experience: "3+ años", level: 5, description: "Estilos responsivos, animaciones y sistemas de interfaz." }),
+  buildSkill("CSS", "frontend", FaCss3Alt, true, { experience: "3+ años", level: 4, description: "Estilos responsivos, animaciones y sistemas de interfaz." }),
   buildSkill("JavaScript", "frontend", FaJsSquare, true, { experience: "2+ años", level: 5, description: "Lenguaje central para interfaces y experiencias interactivas." }),
-  buildSkill("TypeScript", "frontend", SiTypescript, true, { description: "Tipado para interfaces más seguras y mantenibles." }),
+  buildSkill("TypeScript", "frontend", SiTypescript, true, {  level: 3, description: "Tipado para interfaces más seguras y mantenibles." }),
   buildSkill("React", "frontend", FaReact, true, { experience: "2+ años", level: 5, description: "Construcción de interfaces modulares, dinámicas y accesibles." }),
   buildSkill("Vite", "frontend", SiVite, true, { description: "Entorno ágil de desarrollo y compilación web." }),
   buildSkill("Tailwind", "frontend", SiTailwindcss, true, { description: "Sistema de utilidades para interfaces consistentes." }),
   buildSkill("Material UI", "frontend", SiMui, true, { description: "Biblioteca de componentes para productos React." }),
-  buildSkill("Angular", "frontend", FaAngular, true, { description: "Framework para aplicaciones web estructuradas." }),
+  buildSkill("Angular", "frontend", FaAngular, true, {  level: 3, description: "Framework para aplicaciones web estructuradas." }),
   buildSkill("Next.js", "frontend", FaReact, false),
   buildSkill("Vue", "frontend", FaCode, false),
   buildSkill("Svelte", "frontend", FaCode, false),

@@ -6,7 +6,7 @@ type Topic = "greeting" | "identity" | "technologies" | "projects" | "experience
 export const portfolioKnowledge = {
   person: { name: "Jhonatan Ramírez Useche", role: "Ingeniero de Sistemas y desarrollador Full Stack", location: "Cali, Colombia" },
   technologies: { frontend: ["React", "TypeScript"], backend: ["Java", "Spring Boot", "APIs REST"], data: ["SQL", "NoSQL"], workflow: ["Git", "Scrum"] },
-  projects: ["Pokedex Pokémon", "Coopcompartir v2", "Bot de WhatsApp", "JotaR.OS"],
+  projects: ["Pokedex Pokémon","Coopcompartir v2", "Coopcompartir v1", "Proyecto de finanzas", "Bot de WhatsApp", "JotaR.OS", "Mi primer portafolio"],
   experience: ["desarrollo de software en Playtechnologies", "soporte de hardware, POS, redes y Linux", "auxiliar de sistemas en Zagacol"],
   education: ["Tecnología en Análisis y Desarrollo de Sistemas de Información", "Ingeniería de Sistemas"],
   contact: { email: "jhonatanstiven.ramirez@gmail.com", linkedin: "linkedin.com/in/jhonatan-ru", github: "github.com/Jhonara" },
