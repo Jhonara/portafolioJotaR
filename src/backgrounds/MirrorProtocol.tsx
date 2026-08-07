@@ -1,86 +1,364 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { MeshReflectorMaterial, RoundedBox } from "@react-three/drei";
+import { ContactShadows, MeshReflectorMaterial, useGLTF } from "@react-three/drei";
 import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
-import { Color, Group } from "three";
+import {
+  Box3,
+  BufferAttribute,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  ShaderMaterial,
+  Vector3,
+} from "three";
 import type { BackgroundSceneProps } from "./background.types";
 import { useParallaxCamera } from "./shared/camera";
 
-const cyan = new Color("#0fd6cf");
-const hoodie = new Color("#10171b");
-const skin = new Color("#bd7b55");
+const avatarUrl = "/images/avatar/Jhonatan_Avatar3D.glb";
 
-const Capsule = ({ position, scale, color = hoodie }: { position: [number, number, number]; scale: [number, number, number]; color?: Color }) => <mesh position={position} scale={scale} castShadow>
-  <capsuleGeometry args={[0.5, 1, 8, 16]} /><meshStandardMaterial color={color} roughness={0.56} metalness={0.05} />
-</mesh>;
+// Altura "objetivo" en unidades de escena para el avatar de pies a cabeza.
+const TARGET_HEIGHT = 3.1;
 
-const Glasses = () => <group position={[0, 2.92, 0.52]}>
-  <mesh position={[-0.28, 0, 0]}><torusGeometry args={[0.18, 0.026, 8, 20]} /><meshStandardMaterial color="#121316" metalness={0.72} roughness={0.14} /></mesh>
-  <mesh position={[0.28, 0, 0]}><torusGeometry args={[0.18, 0.026, 8, 20]} /><meshStandardMaterial color="#121316" metalness={0.72} roughness={0.14} /></mesh>
-  <mesh position={[0, 0, 0]}><boxGeometry args={[0.22, 0.035, 0.035]} /><meshStandardMaterial color="#121316" metalness={0.72} roughness={0.14} /></mesh>
-</group>;
+// Única fuente de verdad para "dónde está el piso". Piso, anillos y avatar
+// se posicionan TODOS relativos a este número.
+const FLOOR_Y = -1.58;
 
-const JotaAvatar = () => {
-  const dancer = useRef<Group>(null);
-  const leftArm = useRef<Group>(null);
-  const rightArm = useRef<Group>(null);
-  const head = useRef<Group>(null);
+const AvatarPerformance = () => {
+  const performer = useRef<Group>(null);
+  const { scene } = useGLTF(avatarUrl);
+  const avatar = useMemo(() => scene.clone(true), [scene]);
+
+  const scale = useMemo(() => {
+    avatar.traverse((node) => {
+      if (!(node instanceof Mesh)) return;
+
+      node.castShadow = true;
+      node.receiveShadow = true;
+
+      const materials = Array.isArray(node.material)
+        ? node.material
+        : [node.material];
+
+      materials.forEach((material) => {
+        if (material instanceof MeshStandardMaterial) {
+          material.envMapIntensity = 1.05;
+          material.roughness = Math.min(1, material.roughness * 1.1);
+
+          const isBlack =
+            material.emissive &&
+            material.emissive.r === 0 &&
+            material.emissive.g === 0 &&
+            material.emissive.b === 0;
+
+          if (material.emissive && !isBlack) {
+            material.emissiveIntensity = Math.min(
+              0.9,
+              Math.max(material.emissiveIntensity, 0.7)
+            );
+          }
+
+          material.needsUpdate = true;
+        }
+      });
+    });
+
+    const box = new Box3().setFromObject(avatar);
+    const size = new Vector3();
+    box.getSize(size);
+    const center = new Vector3();
+    box.getCenter(center);
+
+    const rawHeight = size.y || 1;
+    const computedScale = TARGET_HEIGHT / rawHeight;
+
+    avatar.position.x -= center.x;
+    avatar.position.z -= center.z;
+    avatar.position.y -= box.min.y;
+
+    return computedScale;
+  }, [avatar]);
 
   useFrame((state) => {
+    if (!performer.current) return;
+
     const time = state.clock.elapsedTime;
-    if (dancer.current) {
-      dancer.current.position.y = Math.sin(time * 2.1) * 0.085;
-      dancer.current.rotation.y = Math.sin(time * 0.52) * 0.2;
-      dancer.current.rotation.z = Math.sin(time * 1.05) * 0.075;
-    }
-    if (leftArm.current) leftArm.current.rotation.z = -0.52 + Math.sin(time * 2.1) * 0.38;
-    if (rightArm.current) rightArm.current.rotation.z = 0.52 - Math.sin(time * 2.1 + 0.7) * 0.34;
-    if (head.current) head.current.rotation.y = Math.sin(time * 0.72) * 0.13;
+    const breathe = Math.sin(time * 1.15);
+    const sway = Math.sin(time * 0.35) + Math.sin(time * 0.9) * 0.35;
+
+    performer.current.position.y = FLOOR_Y + Math.abs(breathe) * 0.05;
+    performer.current.position.x = sway * 0.07;
+    performer.current.rotation.y = 0.08 + sway * 0.1;
+    performer.current.rotation.z = breathe * 0.015;
   });
 
-  return <group ref={dancer} position={[0, -0.83, -1.25]}>
-    <group ref={leftArm} position={[-0.72, 1.85, 0]} rotation-z={-0.52}>
-      <Capsule position={[0, -0.56, 0]} scale={[0.23, 0.72, 0.23]} />
-      <mesh position={[0, -1.15, 0]} castShadow><sphereGeometry args={[0.22, 20, 16]} /><meshStandardMaterial color={skin} roughness={0.6} /></mesh>
+  return (
+    <group ref={performer} scale={scale}>
+      <primitive object={avatar} />
     </group>
-    <group ref={rightArm} position={[0.72, 1.85, 0]} rotation-z={0.52}>
-      <Capsule position={[0, -0.56, 0]} scale={[0.23, 0.72, 0.23]} />
-      <mesh position={[0, -1.15, 0]} castShadow><sphereGeometry args={[0.22, 20, 16]} /><meshStandardMaterial color={skin} roughness={0.6} /></mesh>
-    </group>
-    <RoundedBox args={[1.5, 1.75, 0.62]} radius={0.18} smoothness={4} position={[0, 1.5, 0]} castShadow><meshStandardMaterial color={hoodie} roughness={0.48} metalness={0.08} /></RoundedBox>
-    <mesh position={[0, 1.78, 0.34]}><boxGeometry args={[0.035, 1.16, 0.04]} /><meshBasicMaterial color={cyan} toneMapped={false} /></mesh>
-    <mesh position={[-0.37, 1.78, 0.34]}><boxGeometry args={[0.035, 1.16, 0.04]} /><meshBasicMaterial color={cyan} toneMapped={false} /></mesh>
-    <mesh position={[0, 2.28, 0]} castShadow><sphereGeometry args={[0.72, 28, 20]} /><meshStandardMaterial color={skin} roughness={0.55} /></mesh>
-    <group ref={head}>
-      <mesh position={[0, 2.76, 0]} rotation-x={-0.2} scale={[0.78, 0.36, 0.8]} castShadow><sphereGeometry args={[0.8, 28, 18]} /><meshStandardMaterial color="#111417" roughness={0.42} /></mesh>
-      <mesh position={[0, 2.88, -0.5]} rotation-x={-0.15} scale={[0.46, 0.09, 0.38]} castShadow><boxGeometry args={[1, 1, 1]} /><meshStandardMaterial color="#111417" roughness={0.42} /></mesh>
-      <Glasses />
-    </group>
-    <Capsule position={[-0.42, -0.12, 0]} scale={[0.32, 0.85, 0.32]} color={new Color("#171d20")} />
-    <Capsule position={[0.42, -0.12, 0]} scale={[0.32, 0.85, 0.32]} color={new Color("#171d20")} />
-    <RoundedBox args={[0.62, 0.22, 1.08]} radius={0.07} smoothness={3} position={[-0.42, -1.16, 0.12]} castShadow><meshStandardMaterial color="#e9e8e1" roughness={0.35} /></RoundedBox>
-    <RoundedBox args={[0.62, 0.22, 1.08]} radius={0.07} smoothness={3} position={[0.42, -1.16, 0.12]} castShadow><meshStandardMaterial color="#e9e8e1" roughness={0.35} /></RoundedBox>
-  </group>;
+  );
 };
 
-const MirrorCamera = () => { useParallaxCamera({ position: [0, 1.55, 9.2], target: [0, 0.55, -1.3], positionParallax: [0.12, 0.05], targetParallax: [0.045, 0.02], damping: 1.15 }); return null; };
+const MirrorCamera = () => {
+  useParallaxCamera({
+    position: [0, 1.35, 6.6],
+    target: [0, 0.55, 0],
+    positionParallax: [0.08, 0.04],
+    targetParallax: [0.03, 0.015],
+    damping: 1.2,
+  });
 
-const MirrorProtocol = ({ quality }: BackgroundSceneProps) => <>
-  <color attach="background" args={[new Color("#010708")]} />
-  <fog attach="fog" args={["#010708", 9, 23]} />
-  <MirrorCamera />
-  <ambientLight intensity={0.52} color="#56777c" />
-  <spotLight position={[-3.5, 7.5, 4.5]} intensity={420} angle={0.5} penumbra={1} distance={18} color="#e8ffff" castShadow />
-  <spotLight position={[4, 3.5, 1]} intensity={190} angle={0.55} penumbra={1} distance={16} color="#0dd0cd" />
-  <JotaAvatar />
-  <mesh position={[0, -2.02, -1.15]} rotation-x={-Math.PI / 2} receiveShadow>
-    <planeGeometry args={[22, 18]} />
-    <MeshReflectorMaterial blur={[420, 90]} resolution={quality === "high" ? 1024 : 512} mixBlur={1} mixStrength={3.2} roughness={0.36} metalness={0.9} mirror={0.95} color="#071114" />
-  </mesh>
-  {quality === "high" && <EffectComposer multisampling={0} resolutionScale={0.74}>
-    <Bloom mipmapBlur luminanceThreshold={1.4} luminanceSmoothing={0.3} intensity={0.22} />
-    <Vignette offset={0.2} darkness={0.48} />
-  </EffectComposer>}
-</>;
+  return null;
+};
+
+// Anillos holográficos bajo los pies del avatar.
+const ScanRings = () => {
+  const inner = useRef<Group>(null);
+  const outer = useRef<Group>(null);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (inner.current) inner.current.rotation.z = t * 0.25;
+    if (outer.current) outer.current.rotation.z = -t * 0.12;
+  });
+
+  return (
+    <>
+      <group ref={inner} position={[0, FLOOR_Y + 0.01, 0]} rotation-x={-Math.PI / 2}>
+        <mesh>
+          <ringGeometry args={[0.95, 1.03, 64]} />
+          <meshBasicMaterial color="#13d8d3" transparent opacity={0.35} />
+        </mesh>
+        <mesh>
+          <ringGeometry args={[1.14, 1.17, 64]} />
+          <meshBasicMaterial color="#6efcff" transparent opacity={0.18} />
+        </mesh>
+      </group>
+
+      <group ref={outer} position={[0, FLOOR_Y + 0.008, 0]} rotation-x={-Math.PI / 2}>
+        <mesh>
+          <ringGeometry args={[2.6, 2.66, 80]} />
+          <meshBasicMaterial color="#13d8d3" transparent opacity={0.1} />
+        </mesh>
+      </group>
+    </>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// STARFIELD — campo de partículas con shader propio (Three.js puro).
+// Cada estrella titila con su propia fase (aRandom), no todas al tiempo.
+// ---------------------------------------------------------------------------
+const STAR_COUNT = 500;
+
+const starVertexShader = /* glsl */ `
+  attribute float aRandom;
+  uniform float uTime;
+  varying float vTwinkle;
+
+  void main() {
+    vTwinkle = 0.35 + 0.65 * sin(uTime * (0.4 + aRandom) + aRandom * 30.0);
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = (1.1 + aRandom * 1.6) * (260.0 / -mvPosition.z);
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+const starFragmentShader = /* glsl */ `
+  uniform vec3 uColor;
+  varying float vTwinkle;
+
+  void main() {
+    float d = length(gl_PointCoord - vec2(0.5));
+    float alpha = smoothstep(0.5, 0.0, d) * vTwinkle;
+    gl_FragColor = vec4(uColor, alpha * 0.6);
+  }
+`;
+
+const StarField = () => {
+  const material = useRef<ShaderMaterial>(null);
+
+  const { positions, randoms } = useMemo(() => {
+    const pos = new Float32Array(STAR_COUNT * 3);
+    const rnd = new Float32Array(STAR_COUNT);
+
+    for (let i = 0; i < STAR_COUNT; i += 1) {
+      pos[i * 3] = (Math.random() - 0.5) * 34;
+      pos[i * 3 + 1] = Math.random() * 16 - 1;
+      pos[i * 3 + 2] = -Math.random() * 26 - 2;
+      rnd[i] = Math.random();
+    }
+
+    return { positions: pos, randoms: rnd };
+  }, []);
+
+  useFrame((state) => {
+    if (material.current) {
+      material.current.uniforms.uTime.value = state.clock.elapsedTime;
+    }
+  });
+
+  return (
+    <points>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-aRandom" args={[randoms, 1]} />
+      </bufferGeometry>
+      <shaderMaterial
+        ref={material}
+        transparent
+        depthWrite={false}
+        blending={2 /* AdditiveBlending */}
+        uniforms={{
+          uTime: { value: 0 },
+          uColor: { value: [0.42, 0.9, 0.92] },
+        }}
+        vertexShader={starVertexShader}
+        fragmentShader={starFragmentShader}
+      />
+    </points>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// ENERGY WALL — rejilla dibujada por shader (solo líneas, no un panel sólido)
+// con un barrido de escaneo que sube y se desvanece hacia los bordes.
+// ---------------------------------------------------------------------------
+const wallVertexShader = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const wallFragmentShader = /* glsl */ `
+  uniform float uTime;
+  uniform vec3 uColor;
+  varying vec2 vUv;
+
+  void main() {
+    vec2 uv = vUv;
+    float scale = 18.0;
+    vec2 g = abs(fract(uv * scale - 0.5) - 0.5) / fwidth(uv * scale);
+    float lineMask = 1.0 - min(min(g.x, g.y), 1.0);
+
+    float distFromBase = distance(uv, vec2(0.5, 0.05));
+    float edgeFade = smoothstep(0.78, 0.1, distFromBase);
+    float vFade = smoothstep(0.0, 0.12, uv.y) * smoothstep(1.0, 0.6, uv.y);
+
+    float sweepPos = fract(uTime * 0.06);
+    float sweep = smoothstep(0.03, 0.0, abs(uv.y - sweepPos) - 0.02);
+
+    float alpha = lineMask * edgeFade * vFade * 0.22 + sweep * edgeFade * 0.35;
+    gl_FragColor = vec4(uColor, alpha);
+  }
+`;
+
+const EnergyWall = () => {
+  const material = useRef<ShaderMaterial>(null);
+
+  useFrame((state) => {
+    if (material.current) {
+      material.current.uniforms.uTime.value = state.clock.elapsedTime;
+    }
+  });
+
+  return (
+    <mesh position={[0, FLOOR_Y + 5.2, -3.4]}>
+      <planeGeometry args={[13, 10.4, 1, 1]} />
+      <shaderMaterial
+        ref={material}
+        transparent
+        depthWrite={false}
+        blending={2 /* AdditiveBlending */}
+        uniforms={{
+          uTime: { value: 0 },
+          uColor: { value: [0.07, 0.85, 0.83] },
+        }}
+        vertexShader={wallVertexShader}
+        fragmentShader={wallFragmentShader}
+      />
+    </mesh>
+  );
+};
+
+const MirrorProtocol = ({ quality }: BackgroundSceneProps) => (
+  <>
+    <color attach="background" args={["#03070b"]} />
+    <fog attach="fog" args={["#03070b", 10, 26]} />
+
+    <MirrorCamera />
+
+    <hemisphereLight args={["#1c3d40", "#02040a", 0.5]} />
+    <ambientLight intensity={0.5} color="#ffffff" />
+
+    <spotLight
+      position={[2.5, 6, 6]}
+      intensity={620}
+      angle={0.42}
+      penumbra={1}
+      distance={25}
+      decay={2}
+      color="#ffffff"
+      castShadow
+      shadow-mapSize={[2048, 2048]}
+    />
+
+    <pointLight position={[0, 1.6, 4.5]} intensity={32} distance={10} color="#e8fbff" />
+    <pointLight position={[3.8, 1.8, 2]} intensity={40} distance={10} color="#13d8d3" />
+    <pointLight position={[-3.5, 2.4, 1]} intensity={18} distance={8} color="#13d8d3" />
+
+    <spotLight
+      position={[0, 3, -5]}
+      intensity={85}
+      angle={0.8}
+      penumbra={1}
+      color="#6efcff"
+    />
+
+    {quality === "high" && <EnergyWall />}
+    <StarField />
+
+    <AvatarPerformance />
+    <ScanRings />
+
+    <mesh position={[0, FLOOR_Y, 0]} rotation-x={-Math.PI / 2} receiveShadow>
+      <planeGeometry args={[30, 30]} />
+      <MeshReflectorMaterial
+        blur={[300, 80]}
+        resolution={quality === "high" ? 1024 : 512}
+        mixBlur={0.85}
+        mixStrength={1.35}
+        roughness={0.15}
+        metalness={0.7}
+        mirror={0.55}
+        color="#071216"
+      />
+    </mesh>
+
+    <ContactShadows
+      position={[0, FLOOR_Y + 0.02, 0]}
+      opacity={0.6}
+      scale={8}
+      blur={2.2}
+      far={3}
+      color="#000000"
+    />
+
+    {quality === "high" && (
+      <EffectComposer multisampling={0}>
+        <Bloom
+          mipmapBlur
+          luminanceThreshold={0.88}
+          luminanceSmoothing={0.35}
+          intensity={0.32}
+        />
+        <Vignette offset={0.16} darkness={0.78} />
+      </EffectComposer>
+    )}
+  </>
+);
+
+useGLTF.preload(avatarUrl);
 
 export default MirrorProtocol;
