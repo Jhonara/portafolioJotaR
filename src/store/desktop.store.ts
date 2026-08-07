@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { readBackgroundPreference, saveBackgroundPreference } from "../backgrounds/background.preference";
+import type { BackgroundId } from "../backgrounds/background.types";
 
 export interface AppWindow {
   id: string;
@@ -23,6 +25,7 @@ export type DesktopTheme = "neon" | "matrix" | "night";
 interface DesktopStore {
   windows: AppWindow[];
   theme: DesktopTheme;
+  backgroundId: BackgroundId;
   coffeeMode: boolean;
 
   openWindow: (window: { id: string; title: string }) => void;
@@ -40,6 +43,7 @@ interface DesktopStore {
   moveWindow: (id: string, x: number, y: number) => void;
 
   setTheme: (theme: DesktopTheme) => void;
+  setBackground: (backgroundId: BackgroundId) => void;
 
   activateCoffee: () => void;
 }
@@ -78,6 +82,7 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
 
   windows: [],
   theme: "neon",
+  backgroundId: readBackgroundPreference(),
   coffeeMode: false,
 
   openWindow: (window) =>
@@ -245,6 +250,11 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
     })),
 
   setTheme: (theme) => set({ theme }),
+
+  setBackground: (backgroundId) => {
+    saveBackgroundPreference(backgroundId);
+    set({ backgroundId });
+  },
 
   activateCoffee: () => {
     set({ coffeeMode: true });

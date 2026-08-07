@@ -25,7 +25,7 @@ const Window = ({
     minimizeWindow,
     maximizeWindow,
   } = useDesktopStore();
-  const usesInternalScroll = ["skills", "experience", "contact", "mail", "documents", "pokemon"].includes(id);
+  const usesInternalScroll = ["skills", "experience", "contact", "mail", "documents", "pokemon", "personalization"].includes(id);
 
   return (
     <div

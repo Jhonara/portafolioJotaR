@@ -12,6 +12,10 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  resolve: {
+    // R3F, Drei and postprocessing must share one Three/Fiber runtime.
+    dedupe: ["three", "@react-three/fiber"],
+  },
   plugins: [
     react(),
     tailwindcss(),

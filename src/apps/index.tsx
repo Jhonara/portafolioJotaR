@@ -9,6 +9,7 @@ import IncreaseApp from "./IncreaseApp";
 import AchievementsApp from "./AchievementsApp";
 import MailApp from "./MailApp";
 import DocumentsApp from "./DocumentsApp";
+import PersonalizationApp from "./PersonalizationApp";
 
 export const apps = {
   about: <AboutApp />,
@@ -22,4 +23,5 @@ export const apps = {
   achievements: <AchievementsApp />,
   mail: <MailApp />,
   documents: <DocumentsApp />,
+  personalization: <PersonalizationApp />,
 };

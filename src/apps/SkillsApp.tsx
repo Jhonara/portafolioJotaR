@@ -112,7 +112,7 @@ const TalentTree = () => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [viewportWidth, setViewportWidth] = useState(0);
-  const { nodes, edges } = useMemo(makeTree, []);
+  const { nodes, edges } = useMemo(() => makeTree(), []);
   const scale = viewportWidth ? Math.min(1, viewportWidth / STAGE.width) : 1;
 
   useEffect(() => {
@@ -130,10 +130,9 @@ const TalentTree = () => {
   }, []);
 
   const hovered = hoveredId ? nodes.find((node) => node.id === hoveredId) : undefined;
-  const activePath = useMemo(() => {
-    if (!hovered) return new Set<string>();
-    return new Set(branches[hovered.branch].slice(0, hovered.branchIndex + 1).map((skill) => skill.id));
-  }, [hovered]);
+  const activePath = hovered
+    ? new Set(branches[hovered.branch].slice(0, hovered.branchIndex + 1).map((skill) => skill.id))
+    : new Set<string>();
   const selectedSkill = selectedId ? skillById.get(selectedId) ?? null : null;
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {

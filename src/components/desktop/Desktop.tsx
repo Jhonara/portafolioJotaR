@@ -9,10 +9,11 @@ import {
   Terminal,
   FolderArchive,
   Files,
+  Palette,
 } from "lucide-react";
 
 import WindowManager from "../windows/WindowManager";
-import DesktopBackground from "./DesktopBackground";
+import BackgroundEngine from "../../backgrounds/BackgroundEngine";
 import DesktopHeader from "./DesktopHeader";
 import DesktopClock from "./DesktopClock";
 import DesktopIcon from "./DesktopIcon";
@@ -46,13 +47,14 @@ const Desktop = () => {
       ref={desktopRef}
       className={`relative h-screen w-screen overflow-hidden ${theme === "matrix" ? "matrix-mode" : theme === "night" ? "night-mode" : "neon-mode"}`}
     >
-      <DesktopBackground />
+      <BackgroundEngine />
 
       <DesktopHeader />
       <LanguageSwitcher />
       <aside className="absolute left-4 top-24 z-20 hidden flex-col gap-3 sm:flex">
         <QuickAccess icon={<TrophyIcon />} label="Logros" onClick={() => openWindow({ id: "achievements", title: "Logros" })} />
         <QuickAccess icon={<Files size={21} />} label="Documentos" onClick={() => openWindow({ id: "documents", title: "Documentos" })} />
+        <QuickAccess icon={<Palette size={21} />} label="Personalizar" onClick={() => openWindow({ id: "personalization", title: "Personalizar" })} />
         <QuickAccess icon={<Mail size={21} />} label="Correo" onClick={() => openWindow({ id: "mail", title: "JotaR Mail" })} />
       </aside>
 
