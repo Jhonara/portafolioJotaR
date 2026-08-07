@@ -9,7 +9,9 @@ type Point = { x: number; y: number };
 type TalentNode = SkillData & Point & { branchIndex: number };
 type TalentEdge = { id: string; branch: TalentBranch; from: Point; to: Point; index: number };
 
-const STAGE = { width: 1200, height: 1800, core: { x: 750, y: 1550 } };
+// El árbol se dibuja en un lienzo virtual y se escala al ancho disponible.
+// Así conserva sus proporciones sin necesitar desplazamiento horizontal.
+const STAGE = { width: 1500, height: 1800, core: { x: 750, y: 1550 } };
 const branchStyle: Record<TalentBranch, { label: string; color: string }> = {
   backend: { label: "BACKEND", color: "#13AB91" },
   tools: { label: "DATA & TOOLS", color: "#f4c95d" },
@@ -109,15 +111,22 @@ const TalentTree = () => {
   const dragRef = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [viewportWidth, setViewportWidth] = useState(0);
   const { nodes, edges } = useMemo(makeTree, []);
+  const scale = viewportWidth ? Math.min(1, viewportWidth / STAGE.width) : 1;
 
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
-    const positionTree = () => { viewport.scrollLeft = Math.max(0, (STAGE.width - viewport.clientWidth) / 2); viewport.scrollTop = Math.max(0, STAGE.height - viewport.clientHeight); };
+    const positionTree = () => {
+      setViewportWidth(viewport.clientWidth);
+      viewport.scrollTop = Math.max(0, STAGE.height * Math.min(1, viewport.clientWidth / STAGE.width) - viewport.clientHeight);
+    };
     const frame = window.requestAnimationFrame(positionTree);
     const timer = window.setTimeout(positionTree, 120);
-    return () => { window.cancelAnimationFrame(frame); window.clearTimeout(timer); };
+    const observer = new ResizeObserver(positionTree);
+    observer.observe(viewport);
+    return () => { window.cancelAnimationFrame(frame); window.clearTimeout(timer); observer.disconnect(); };
   }, []);
 
   const hovered = hoveredId ? nodes.find((node) => node.id === hoveredId) : undefined;
@@ -132,20 +141,20 @@ const TalentTree = () => {
     const viewport = viewportRef.current;
     if (!viewport) return;
     viewport.setPointerCapture(event.pointerId);
-    dragRef.current = { x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+    dragRef.current = { x: event.clientX, y: event.clientY, left: 0, top: viewport.scrollTop };
   };
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const viewport = viewportRef.current;
     if (!viewport || !dragRef.current) return;
-    viewport.scrollLeft = dragRef.current.left - (event.clientX - dragRef.current.x);
     viewport.scrollTop = dragRef.current.top - (event.clientY - dragRef.current.y);
   };
   const stopDragging = () => { dragRef.current = null; };
 
   return <div className="talent-tree-shell relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-white/10 bg-[#030813] shadow-[0_0_55px_rgba(19,171,145,.11)]">
     <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_92%,rgba(19,171,145,.11),transparent_27%),radial-gradient(circle_at_10%_42%,rgba(19,171,145,.06),transparent_25%),radial-gradient(circle_at_90%_42%,rgba(233,45,136,.07),transparent_25%)]" />
-    <div ref={viewportRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={stopDragging} onPointerCancel={stopDragging} className="talent-tree-viewport relative h-full min-h-0 overflow-auto">
-      <div className="talent-tree-stage relative" style={{ width: STAGE.width, height: STAGE.height }}>
+    <div ref={viewportRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={stopDragging} onPointerCancel={stopDragging} className="talent-tree-viewport relative h-full min-h-0 overflow-x-hidden overflow-y-auto">
+      <div className="talent-tree-stage relative" style={{ width: "100%", height: STAGE.height * scale }}>
+        <div className="relative origin-top-left" style={{ width: STAGE.width, height: STAGE.height, transform: `scale(${scale})` }}>
         <svg className="pointer-events-none absolute inset-0 overflow-visible" width={STAGE.width} height={STAGE.height} viewBox={`0 0 ${STAGE.width} ${STAGE.height}`} aria-hidden="true">
           {edges.map((edge) => {
             const pathActive = hovered?.branch === edge.branch && edge.index <= hovered.branchIndex;
@@ -162,6 +171,7 @@ const TalentTree = () => {
         {(Object.keys(branchStyle) as TalentBranch[]).map((branch) => <span key={branch} className="pointer-events-none absolute font-mono text-xs font-bold tracking-[.3em]" style={{ color: branchStyle[branch].color, left: branch === "backend" ? 100 : branch === "tools" ? 675 : 1210, top: branch === "backend" || branch === "frontend" ? 1375 : 1350 }}>{branchStyle[branch].label}</span>)}
 
         {nodes.map((node, index) => <SkillNode key={node.id} skill={node} x={node.x} y={node.y} index={index} active={activePath.has(node.id)} dimmed={Boolean(hovered && !activePath.has(node.id))} onHover={setHoveredId} onSelect={setSelectedId} />)}
+        </div>
       </div>
     </div>
     <div className="pointer-events-none absolute bottom-4 right-5 z-20 hidden items-center gap-2 rounded-full border border-white/10 bg-[#071224]/90 px-3 py-1.5 font-mono text-[10px] text-white/50 md:flex"><Move size={12} /> DESPLAZA EL ÁRBOL · HOVER PARA ILUMINAR LA RUTA</div>
