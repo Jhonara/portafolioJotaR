@@ -28,7 +28,7 @@ const ManagedWindow = ({ appWindow }: ManagedWindowProps) => {
   const target = getMinimizeTarget(appWindow.id);
 
   const onTitlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (appWindow.maximized || appWindow.minimizing || (event.target as HTMLElement).closest("button")) return;
+    if (appWindow.maximized || window.innerWidth < 768 || appWindow.minimizing || (event.target as HTMLElement).closest("button")) return;
 
     event.currentTarget.setPointerCapture(event.pointerId);
     dragStart.current = {

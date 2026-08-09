@@ -51,8 +51,10 @@ const Window = ({
           border-b
           border-white/10
           bg-white/5
-          px-5
-          py-3
+          px-3
+          py-2.5
+          sm:px-5
+          sm:py-3
           cursor-grab
           active:cursor-grabbing
         "
@@ -88,7 +90,7 @@ const Window = ({
         <div className="w-14" />
       </div>
 
-      <div className={`min-h-0 flex-1 p-6 ${usesInternalScroll ? "overflow-hidden" : "overflow-auto"}`}>
+      <div className={`min-h-0 flex-1 p-3 sm:p-6 ${usesInternalScroll ? "overflow-hidden" : "overflow-auto"}`}>
         {children}
       </div>
     </div>

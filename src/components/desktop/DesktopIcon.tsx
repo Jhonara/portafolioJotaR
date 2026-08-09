@@ -12,7 +12,7 @@ const DesktopIcon = ({ icon, title, id }: Props) => {
   const { openWindow } = useDesktopStore();
   return (
     <motion.button
-    onDoubleClick={() =>
+    onClick={() =>
         openWindow({
             id,
             title,

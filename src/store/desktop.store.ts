@@ -54,6 +54,10 @@ const getWindowDimensions = (windowId: string) => {
   const viewportWidth = typeof window === "undefined" ? 1440 : window.innerWidth;
   const viewportHeight = typeof window === "undefined" ? 900 : window.innerHeight;
 
+  if (viewportWidth < 768) {
+    return { width: viewportWidth, height: viewportHeight };
+  }
+
   if (largeWindowIds.has(windowId)) {
     return {
       width: Math.min(1180, Math.max(320, viewportWidth - 32)),
@@ -71,6 +75,8 @@ const getInitialPosition = (windowIndex: number, width: number, height: number) 
   const cascade = (windowIndex % 6) * 32;
   const viewportWidth = typeof window === "undefined" ? 1440 : window.innerWidth;
   const viewportHeight = typeof window === "undefined" ? 900 : window.innerHeight;
+
+  if (viewportWidth < 768) return { x: 0, y: 0 };
 
   return {
     x: Math.max(16, Math.min(viewportWidth - width - 16, Math.round((viewportWidth - width) / 2) + cascade)),
@@ -109,6 +115,7 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
                   height: dimensions.height,
                   x: largeWindowIds.has(window.id) ? position.x : w.x,
                   y: largeWindowIds.has(window.id) ? position.y : w.y,
+                  maximized: globalThis.innerWidth < 768 || w.maximized,
                   zIndex: highest + 1
                 }
               : w
@@ -144,7 +151,7 @@ export const useDesktopStore = create<DesktopStore>((set) => ({
 
             minimized: false,
             minimizing: false,
-            maximized: false,
+            maximized: globalThis.innerWidth < 768,
             opened: true,
 
             zIndex: highest + 1
