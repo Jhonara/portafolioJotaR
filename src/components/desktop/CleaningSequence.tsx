@@ -3,6 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Center, useGLTF } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { Group, Mesh } from "three";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export type CleaningPhase = "arriving" | "cleaning" | "leaving" | "complete";
 type Props = { phase: CleaningPhase; message: string };
@@ -29,16 +30,16 @@ const CleaningRobot = ({ phase }: Pick<Props, "phase">) => {
   return <group ref={robot} scale={0.72}><Center><primitive object={model} /></Center></group>;
 };
 
-const CleaningSequence = ({ phase, message }: Props) => <>
+const CleaningSequence = ({ phase, message }: Props) => { const { t } = useLanguage(); return <>
   <motion.div className="pointer-events-none absolute inset-0 z-40 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,9,12,.34)_100%)]" initial={{ opacity: 0 }} animate={{ opacity: phase === "complete" ? 0 : 1 }} transition={{ duration: 0.55 }} />
   <motion.div className="pointer-events-none absolute inset-0 z-40 bg-[repeating-radial-gradient(ellipse_at_50%_50%,transparent_0px,transparent_7px,rgba(128,186,180,.07)_8px,transparent_10px)]" initial={{ opacity: 0.42 }} animate={{ opacity: phase === "cleaning" ? 0.08 : phase === "complete" ? 0 : 0.34 }} transition={{ duration: 1.2 }} />
   <Canvas className="pointer-events-none absolute inset-0 z-50" dpr={[1, 1.5]} camera={{ fov: 45, position: [0, 0, 12] }} gl={{ alpha: true, antialias: true }}>
     <ambientLight intensity={1.9} /><directionalLight position={[3, 7, 5]} intensity={3.2} color="#dcffff" /><pointLight position={[-3, 1, 4]} intensity={15} distance={10} color="#13d8d1" /><CleaningRobot phase={phase} />
   </Canvas>
   <motion.div key={`${phase}-${message}`} className="pointer-events-none absolute left-1/2 top-20 z-60 w-[min(88vw,430px)] -translate-x-1/2 rounded-2xl border border-cyan-300/35 bg-slate-950/85 px-5 py-3 text-center shadow-[0_0_36px_rgba(34,211,238,.2)] backdrop-blur-xl" initial={{ opacity: 0, y: -14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }}>
-    <p className="font-mono text-[10px] tracking-[.22em] text-cyan-300">CLEANER BOT // {phase === "complete" ? "TAREA FINALIZADA" : "EN OPERACIÓN"}</p><p className="mt-1 text-sm font-medium text-white/90">{message}</p>
+    <p className="font-mono text-[10px] tracking-[.22em] text-cyan-300">{t("cleanerBot")} // {phase === "complete" ? t("taskCompleted") : t("inOperation")}</p><p className="mt-1 text-sm font-medium text-white/90">{message}</p>
   </motion.div>
-</>;
+</>; };
 
 useGLTF.preload(robotUrl);
 export default CleaningSequence;

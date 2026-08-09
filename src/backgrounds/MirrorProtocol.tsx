@@ -4,7 +4,6 @@ import { ContactShadows, MeshReflectorMaterial, useGLTF } from "@react-three/dre
 import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import {
   Box3,
-  BufferAttribute,
   Group,
   Mesh,
   MeshStandardMaterial,

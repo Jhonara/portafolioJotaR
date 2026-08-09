@@ -52,10 +52,10 @@ const Desktop = () => {
       <DesktopHeader />
       <LanguageSwitcher />
       <aside className="absolute left-4 top-24 z-20 hidden flex-col gap-3 sm:flex">
-        <QuickAccess icon={<TrophyIcon />} label="Logros" onClick={() => openWindow({ id: "achievements", title: "Logros" })} />
-        <QuickAccess icon={<Files size={21} />} label="Documentos" onClick={() => openWindow({ id: "documents", title: "Documentos" })} />
-        <QuickAccess icon={<Palette size={21} />} label="Personalizar" onClick={() => openWindow({ id: "personalization", title: "Personalizar" })} />
-        <QuickAccess icon={<Mail size={21} />} label="Correo" onClick={() => openWindow({ id: "mail", title: "JotaR Mail" })} />
+        <QuickAccess icon={<TrophyIcon />} label={t("achievements")} onClick={() => openWindow({ id: "achievements", title: t("achievements") })} />
+        <QuickAccess icon={<Files size={21} />} label={t("documents")} onClick={() => openWindow({ id: "documents", title: t("documents") })} />
+        <QuickAccess icon={<Palette size={21} />} label={t("customize")} onClick={() => openWindow({ id: "personalization", title: t("customize") })} />
+        <QuickAccess icon={<Mail size={21} />} label={t("mail")} onClick={() => openWindow({ id: "mail", title: "JotaR Mail" })} />
       </aside>
 
       <motion.div

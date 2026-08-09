@@ -16,7 +16,7 @@ const prompts = { es: ["¿Quién eres?", "¿Qué tecnologías maneja?", "¿Qué 
 type Dock = { side: "left" | "right"; bottom: number };
 
 const NexoAssistant = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const { openWindow } = useDesktopStore();
   const unlock = useAchievementsStore((state) => state.unlock);
   const [open, setOpen] = useState(false);
@@ -31,7 +31,7 @@ const NexoAssistant = () => {
   const lastAmbient = useRef(-1);
   const lastInteraction = useRef(0);
   const speakingTimer = useRef<number | undefined>(undefined);
-  const copy = useMemo(() => language === "es" ? { title: "Nexo · guía del sistema", placeholder: "Pregúntale algo a Nexo...", quick: "Preguntas rápidas", close: "Cerrar conversación", send: "Enviar", typing: "Nexo está escribiendo...", welcome: welcome.es } : { title: "Nexo · system guide", placeholder: "Ask Nexo something...", quick: "Quick questions", close: "Close conversation", send: "Send", typing: "Nexo is typing...", welcome: welcome.en }, [language]);
+  const copy = useMemo(() => language === "es" ? { title: "Nexo · guía del sistema", placeholder: "Pregúntale algo a Nexo...", quick: "Preguntas rápidas", close: "Cerrar conversación", send: "Enviar", typing: "Nexo está escribiendo...", welcome: welcome.es, online: t("nexoOnline") } : { title: "Nexo · system guide", placeholder: "Ask Nexo something...", quick: "Quick questions", close: "Close conversation", send: "Send", typing: "Nexo is typing...", welcome: welcome.en, online: t("nexoOnline") }, [language, t]);
 
   const speakForAMoment = () => {
     window.clearTimeout(speakingTimer.current);
@@ -130,7 +130,7 @@ const NexoAssistant = () => {
     <AnimatePresence>{!open && <motion.button type="button" onClick={() => setOpen(true)} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} className="pointer-events-auto mb-1 max-w-64 rounded-2xl border border-cyan-200/20 bg-slate-950/85 px-4 py-3 text-left text-xs leading-5 text-cyan-50 shadow-[0_12px_36px_rgba(0,0,0,.34)] backdrop-blur-xl hover:border-cyan-200/50"><span className="mb-1 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[.16em] text-cyan-300"><Sparkles size={12} /> Nexo</span>{bubble}</motion.button>}</AnimatePresence>
     <NexoChat open={open} messages={messages} input={input} isTyping={isTyping} onInput={setInput} onSubmit={() => send(input)} onClose={() => setOpen(false)} onPrompt={send} prompts={prompts[language]} copy={copy} />
     <NexoCharacter mood={mood} lookAt={lookAt} open={open} speaking={speaking || isTyping} onClick={() => setOpen((current) => !current)} />
-    {!open && <span className="mt-1 flex items-center gap-1 self-center text-[10px] text-white/45">{language === "es" ? "habla con Nexo" : "talk to Nexo"} <ChevronDown size={12} /></span>}
+    {!open && <span className="mt-1 flex items-center gap-1 self-center text-[10px] text-white/45">{t("talkToNexo")} <ChevronDown size={12} /></span>}
   </motion.aside>;
 };
 
